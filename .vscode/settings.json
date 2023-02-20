@@ -1,0 +1,19 @@
+{
+    "clangd.trace": "",
+    "clangd.serverCompletionRanking": false,
+    "clangd.checkUpdates": true,
+    "clangd.fallbackFlags": [
+        "-I/usr/local/include/wx-3.2",
+        "-I/usr/local/lib/wx/include/gtk3-unicode-3.2",
+        "-DWXUSINGDLL",
+        "-D__WXGTK__",
+        "-D_FILE_OFFSET_BITS=64",
+        "-pthread"
+    ],
+    "workbench.iconTheme": "vs-seti",
+    "lldb.displayFormat": "auto",
+    "lldb.showDisassembly": "auto",
+    "lldb.dereferencePointers": true,
+    "lldb.consoleMode": "commands",
+    "statsBar.location": "Right"
+}
