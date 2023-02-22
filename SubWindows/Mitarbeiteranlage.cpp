@@ -1,4 +1,5 @@
 #include "Mitarbeiteranlage.hpp"
+#include "wx/datetime.h"
 
 
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
@@ -110,15 +111,6 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow
 }
 
 void Mitarbeiteranlage::on_save(wxCommandEvent& event){
- //Angaben vom Nutzer prüfen lassen
-
- //xMessageBox( 
- //    "Voller Name: "+wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
- //    +"\nBenutzername: "+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))
- //    +"\nAdresse: ",
- //    wxString::FromUTF8("Bitte prüfen Sie die Angaben!"),
- //    wxYES_NO|wxICON_ERROR
- //  );
  
  //Prüfung obBenutzername
   wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"')";
@@ -132,8 +124,18 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
     return;
   }
 
+  //Prüfung Alter
+  if((wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25) < 18){
+    wxMessageBox( 
+     wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
+      wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " ist noch zu jung.",
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+    );
+    return;
+  }
 
-  //Speichern
+  //Datum formatieren
   wxDateTime vertragsstart = {
           start_date->GetDate().GetDay(), 
         start_date->GetDate().GetMonth(),
@@ -143,7 +145,6 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
        0,
      0
   };
-
   wxDateTime geburtstag = {
          birth_date->GetDate().GetDay(), 
         birth_date->GetDate().GetMonth(),
@@ -153,41 +154,57 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
        0,
      0
   };
-
   wxString strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));
   wxString strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));
 
-  strSQL =  "call SP_INSERT_MA('"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::Land]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))+"','"
-  +wxString::FromUTF8(cbo_tarife->GetValue().mb_str(wxConvUTF8))+"','"
-  +strVertragsstart.ToStdString()+"','"
-  +strGeburtstag.ToStdString()
-  +"')";
-  
-  bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
-  if(fail){
-    wxMessageBox( 
-      wxString::FromUTF8("Bitten wenden Sie sich an die Administration!"),
-      wxString::FromUTF8("Fehler beim Speichervorgang!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
-  else
-  wxMessageBox( 
-    wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
-    wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " wurde angelegt.",
-    wxString::FromUTF8("Speichervorgang erfolgreich."),
-    wxOK|wxICON_INFORMATION
+
+  //Angaben vom Nutzer prüfen lassen
+  int choice = wxMessageBox( 
+  "Voller Name:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
+  +"\n\nBenutzername:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))
+  +"\n\nAdresse:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))
+  +"\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))
+  +"\n\nSozielversicherungsnummer:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))
+  +"\n\nAnstellungsdatum:\n"+strVertragsstart
+  +"\n\nGeburtstag:\n"+strGeburtstag,
+  wxString::FromUTF8("Bitte prüfen Sie die Angaben!"),
+  wxYES_NO|wxICON_ERROR
   );
+
+  if(choice == 2){
+    //Mitarbeiter anlegen
+    strSQL =  "call SP_INSERT_MA('"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::Land]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))+"','"
+    +wxString::FromUTF8(cbo_tarife->GetValue().mb_str(wxConvUTF8))+"','"
+    +strVertragsstart.ToStdString()+"','"
+    +strGeburtstag.ToStdString()
+    +"')";
+
+    bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
+    if(fail){
+      wxMessageBox( 
+        wxString::FromUTF8("Bitten wenden Sie sich an die Administration!"),
+        wxString::FromUTF8("Fehler beim Speichervorgang!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
+    else
+    wxMessageBox( 
+      wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
+      wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " wurde angelegt.",
+      wxString::FromUTF8("Speichervorgang erfolgreich."),
+      wxOK|wxICON_INFORMATION
+    );
+  }
 }
 
 Mitarbeiteranlage::~Mitarbeiteranlage(){
