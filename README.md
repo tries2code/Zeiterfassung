@@ -18,6 +18,7 @@ Zeiterfassung:
     -Nur für angelegte Mitarbeiter möglich
     -Lässt keine Negativen Zeitangaben zu
     -Lässt keine Zeitüberlappung zu
+    -Lässt keine Eingaben über der maximalen Arbeitszeit pro Tag(konfigurierbar) zu
     -Eingabe eines abweichenden Enddatums ist möglich
 
 
@@ -31,3 +32,5 @@ Zeiterfassung:
 Mitarbeiteranlage:
   -Zur Anlage neuer Mitarbeiter
   -Prüft ob der Benutzername bereits in der Datenbank vorhanden ist, und fordert gegebenenfalls eine Alternative
+  -Prüft Altersangabe auf Plausibilität
+  -Prüft Altersangabe auf Mindesteintrittsalter(konfigurierbar)

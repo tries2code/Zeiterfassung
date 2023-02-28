@@ -1,5 +1,6 @@
 #include "Mitarbeiteranlage.hpp"
 #include "wx/datetime.h"
+#include <bits/types/time_t.h>
 
 
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
@@ -124,11 +125,25 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
     return;
   }
 
-  //Prüfung Alter
-  if((wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25) < 18){
+  //Prüfung auf negative Altersangabe
+  if(wxDateTime::Now().GetYear() < birth_date->GetDate().GetYear()){
     wxMessageBox( 
-      wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
-      + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " ist noch zu jung.",
+      "Altersangabe unplausibel",
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+    );
+    return;
+  }
+
+  //Prüfung Mindestalter
+  std::string str_min_age = db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')");
+  int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
+  if(this_age < atoi(str_min_age.c_str())){
+    wxMessageBox( 
+      wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + str_min_age + " Jahre.\n"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
+      + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
+      + " ist noch zu jung.",
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
     );
@@ -148,9 +163,8 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
          birth_date->GetDate().GetYear(),
          0,0,0,0
   };
-  wxString strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));
-  wxString strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));
-
+  wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessageboc
+  wxString strGeburtstag = geburtstag.Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessageboc
 
   //Angaben vom Nutzer prüfen lassen
   int choice = wxMessageBox( 
@@ -166,6 +180,8 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
   );
 
   if(choice == 2){
+    strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));  //Formatierung für DB-Eintrag
+    strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));        //Formatierung für DB-Eintrag
     //Mitarbeiter anlegen
     strSQL =  "call SP_INSERT_MA('"
     +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
