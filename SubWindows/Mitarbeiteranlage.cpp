@@ -112,7 +112,7 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow
 
 void Mitarbeiteranlage::on_save(wxCommandEvent& event){
  
- //Prüfung obBenutzername
+ //Prüfung Benutzername
   wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"')";
   wxString check_user = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
   if(check_user != "0"){
@@ -127,8 +127,8 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
   //Prüfung Alter
   if((wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25) < 18){
     wxMessageBox( 
-     wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
-      wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " ist noch zu jung.",
+      wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
+      + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " ist noch zu jung.",
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
     );
@@ -140,19 +140,13 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
           start_date->GetDate().GetDay(), 
         start_date->GetDate().GetMonth(),
          start_date->GetDate().GetYear(),
-         0,
-       0,
-       0,
-     0
+         0,0,0,0
   };
   wxDateTime geburtstag = {
          birth_date->GetDate().GetDay(), 
         birth_date->GetDate().GetMonth(),
          birth_date->GetDate().GetYear(),
-         0,
-       0,
-       0,
-     0
+         0,0,0,0
   };
   wxString strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));
   wxString strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));
@@ -197,7 +191,7 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
       );
       return;
     }
-    else
+    
     wxMessageBox( 
       wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
       wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " wurde angelegt.",

@@ -22,13 +22,13 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     menu_Zeit->Append(wxID_EXIT, "&Beenden \tCtrl-Q", "Programm beenden.");
 
     wxMenu *menu_Administration = new wxMenu;
-    menu_Administration->Append(ID_Mitarbeiteranlage,"&Mitarbeiteranlage \tCtrl-M", wxString::FromUTF8("Neue Mitarbeiter anlegen."));
+    menu_Administration->Append(ID_Mitarbeiteranlage,"&Anlegen \tCtrl-M", wxString::FromUTF8("Neue Mitarbeiter anlegen."));
     wxMenu *menu_Hilfe = new wxMenu;
     menu_Hilfe->Append(wxID_ABOUT,"&Hilfe \tCtrl-H", wxString::FromUTF8("Nützliche Informationen."));
     
     wxMenuBar *menu_Bar = new wxMenuBar;
     menu_Bar->Append( menu_Zeit, "&Zeit");
-    menu_Bar->Append( menu_Administration, "&Administration");
+    menu_Bar->Append( menu_Administration, "&Mitarbeiter");
     menu_Bar->Append( menu_Hilfe, "&Hilfe");
     menu_Bar->SetBackgroundColour(wxColour(255,136,0,75));
     SetMenuBar(menu_Bar);
@@ -76,8 +76,7 @@ void MainFrame::on_new_employee(wxCommandEvent& event){
 wxString serializeTimePoint( const time_point& time, const std::string& format)
 {
     std::time_t tt = std::chrono::system_clock::to_time_t(time);
-    std::tm tm = *std::gmtime(&tt); //GMT (UTC)
-    //std::tm tm = *std::localtime(&tt); //Locale time-zone, usually UTC by default.
+    std::tm tm = *std::localtime(&tt); //Locale time-zone, usually UTC(std::::gmtime()) by default.
     std::stringstream ss;
     ss << std::put_time( &tm, format.c_str() );
     return (wxString)ss.str();

@@ -1,4 +1,5 @@
 #include "Zeiterfassung.hpp"
+#include "wx/datetime.h"
 
 Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
 
@@ -111,6 +112,21 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
     return;
   }
 
+//Prüfung max_Tagesarbeitszeit////////////
+  std::string str_max_hours_per_day = db->get_string_from_db("call SP_GET_Konfiguration('max_h_pro_tag')");
+  std::string hours = std::to_string((end.GetTicks() - start.GetTicks()) / float(60*60));
+  if(std::stof(hours) > std::stof(str_max_hours_per_day)){
+     wxMessageBox( 
+      wxString::FromUTF8("Maximale Arbeitszeit pro Tag("+str_max_hours_per_day+" Stunden) überschritten.\nEingegebene Stundenanzahl: "+hours.substr(0,hours.length()-4)+" Stunden."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+    );
+    return;
+  }
+
+
+
+//Prüfung auf Zeitüberlappung////////////
   strSQL = "call SP_CHECK_Arbeitszeiten('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+Anfangszeit.ToStdString()+"', '"+Endzeit.ToStdString()+"')";
   wxString check = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
   if(check != "0"){
