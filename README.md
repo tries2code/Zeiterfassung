@@ -25,6 +25,7 @@ Zeiterfassung:
 Übersicht:
     -Nur für angelegte Mitarbeiter möglich
     -Nur Jahre in denen der jeweilige Mitarbeiter tätig war stehen zur Auswahl
+    -Mitarbeiterauswahl per Dropdown oder Autocomplete
     -Zeigt eine oder alle Monate pro Jahr und Mitarbeiter an
     -Zeigt die Gesamt-Zeit der aktuellen Auswahl in Stunden an
 

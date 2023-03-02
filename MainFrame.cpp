@@ -1,5 +1,4 @@
 #include "MainFrame.hpp"
-#include "SubWindows/Uebersicht.hpp"
 
 
 using time_point = std::chrono::system_clock::time_point;

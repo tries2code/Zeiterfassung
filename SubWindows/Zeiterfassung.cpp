@@ -1,13 +1,13 @@
 #include "Zeiterfassung.hpp"
-#include "wx/datetime.h"
 
 Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
 
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
   lables[(int)z_lbl::Mitabeiter] = new wxStaticText(this,wxID_ANY,"Mitarbeiter");
-  cbo_benutzer = new wxComboBox(this, wxID_ANY, default_str);
+  cbo_benutzer = new wxComboBox(this, wxID_ANY);
   db->fill_combobox(cbo_benutzer, "SELECT * FROM V_MA_Benutzernamen");
   cbo_benutzer->AutoComplete(cbo_benutzer->GetStrings());
+  cbo_benutzer->SetValue(default_str);
 
 
   lables[(int)z_lbl::Startdatum] = new wxStaticText(this,wxID_ANY,"Startdatum");

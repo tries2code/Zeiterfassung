@@ -1,6 +1,4 @@
 #include "Mitarbeiteranlage.hpp"
-#include "wx/datetime.h"
-#include <bits/types/time_t.h>
 
 
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){

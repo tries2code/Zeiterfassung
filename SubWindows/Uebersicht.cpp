@@ -113,13 +113,24 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
   }
 }
 
+
 void Uebersicht::on_change_usr(wxCommandEvent& event){
   try{
-    combo_boxen[(int)u_cbo::Jahr]->SetValue(default_str);
+
+    //Prüfen ob benutzer vorhanden ist
+    int index = combo_boxen[(int)u_cbo::Benutzer]->GetStrings().Index(combo_boxen[(int)u_cbo::Benutzer]->GetValue());
+    if(index<0){
+      combo_boxen[(int)u_cbo::Jahr]->Clear();
+      combo_boxen[(int)u_cbo::Jahr]->SetValue(default_str);
+      return;
+    }
+    
     //Prüfen ob bereits Arbeitszeiten erfasst wurden
     wxString strSQL = "call SP_CHECK_Jahre('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"')";
     wxString entry_count = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
     if(entry_count =="0"){
+      combo_boxen[(int)u_cbo::Jahr]->Clear();
+      combo_boxen[(int)u_cbo::Jahr]->SetValue(default_str);
       wxMessageBox( 
       wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+" hat bisher keine Arbeitszeiten erfasst.",
       wxString::FromUTF8("Keine Daten vorhanden!"),
@@ -130,7 +141,6 @@ void Uebersicht::on_change_usr(wxCommandEvent& event){
 
     //Jahre in denen Arbeitszeiten erfasst wurden in die Combo-Box füllen
     combo_boxen[(int)u_cbo::Jahr]->Clear();
-    //cboJahr->SetValue(default_cbo);
     strSQL = "call SP_GET_Jahre('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"')";
     db->fill_combobox(combo_boxen[(int)u_cbo::Jahr], strSQL.mb_str(wxConvUTF8));
     combo_boxen[(int)u_cbo::Jahr]->SetValue(combo_boxen[(int)u_cbo::Jahr]->GetString(0));

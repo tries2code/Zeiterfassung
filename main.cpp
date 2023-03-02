@@ -1,7 +1,5 @@
 #include "MainFrame.hpp"
 
-#include "Tools/XML.hpp"
-
 class App: public wxApp{
     public:
         virtual bool OnInit();
@@ -24,8 +22,7 @@ wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Uebersicht, SubWindow)
     EVT_BUTTON(ID_Show_Times, Uebersicht::on_show_times)
-    EVT_COMBOBOX(ID_USR_cbo, Uebersicht::on_change_usr)
-    //EVT_TOOL(ID_USR_cbo, Uebersicht::on_change_usr)
+    EVT_TEXT(ID_USR_cbo, Uebersicht::on_change_usr)
     EVT_TEXT_ENTER(ID_Year_cbo,Uebersicht::on_enter_year)
 wxEND_EVENT_TABLE()
 
