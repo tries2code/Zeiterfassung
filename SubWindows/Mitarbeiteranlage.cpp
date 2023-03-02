@@ -124,9 +124,9 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
   }
 
   //Prüfung auf negative Altersangabe
-  if(wxDateTime::Now().GetYear() < birth_date->GetDate().GetYear()){
+  if(wxDateTime::Now().GetTicks() < birth_date->GetDate().GetTicks()){
     wxMessageBox( 
-      "Altersangabe unplausibel",
+      "Altersangabe unplausibel!",
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
     );
@@ -134,11 +134,11 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
   }
 
   //Prüfung Mindestalter
-  std::string str_min_age = db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')");
+  int min_age = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')").c_str());
   int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
-  if(this_age < atoi(str_min_age.c_str())){
+  if(this_age < min_age){
     wxMessageBox( 
-      wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + str_min_age + " Jahre.\n"
+      wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + std::to_string(min_age) + " Jahre.\n"
       +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
       + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
       + " ist noch zu jung.",
