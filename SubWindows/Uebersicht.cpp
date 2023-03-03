@@ -4,13 +4,15 @@
 Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
   
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
+  title->SetLabel(wxString::FromUTF8("Zeitübersicht"));
+
   lables[(int)u_lbl::Benutzer] = new wxStaticText(this,wxID_ANY,"    Benutzer");
-  combo_boxen[(int)u_cbo::Benutzer] = new wxComboBox(this, ID_USR_cbo, default_str,wxDefaultPosition,wxDefaultSize,0,NULL,wxTE_PROCESS_ENTER);
-
   lables[(int)u_lbl::Monat] = new wxStaticText(this,wxID_ANY,"    Monat");
-  combo_boxen[(int)u_cbo::Monat] = new wxComboBox(this, wxID_ANY, "Alle");
-
   lables[(int)u_lbl::Jahr] = new wxStaticText(this,wxID_ANY,"    Jahr");
+  lables[(int)u_lbl::Stunden] = new wxStaticText(this,wxID_ANY,"");
+
+  combo_boxen[(int)u_cbo::Benutzer] = new wxComboBox(this, ID_USR_cbo, default_str);
+  combo_boxen[(int)u_cbo::Monat] = new wxComboBox(this, wxID_ANY, "Alle");
   combo_boxen[(int)u_cbo::Jahr] = new wxComboBox(this, ID_Year_cbo, default_str,wxDefaultPosition,wxDefaultSize,0,NULL,wxTE_PROCESS_ENTER);
   set_up_combos();
 
@@ -18,7 +20,6 @@ Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
   set_up_grid();
 
   btn_show_times = new wxButton(this,ID_Show_Times,"Daten anzeigen");
-  lables[(int)u_lbl::Stunden] = new wxStaticText(this,wxID_ANY,"");
 
 //Anordnung aller sichtbaren Elemente/////////////////////////////////////////////////////////////////////////////////
  
@@ -26,6 +27,9 @@ Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
   szrflags.Border(wxALL,5);
 
   //Sizer-Pointer werden innerhalb von SetSizer() freigegeben
+  wxFlexGridSizer * title_szr = new wxFlexGridSizer(1,100,10);
+  title_szr->Add(title);
+
   wxFlexGridSizer* szr = new wxFlexGridSizer(6,10,10);
   szr->Add( lables[(int)u_lbl::Benutzer],szrflags );
   szr->Add( combo_boxen[(int)u_cbo::Benutzer],szrflags );
@@ -40,15 +44,16 @@ Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
   wxFlexGridSizer * szr2 = new wxFlexGridSizer(1,10,10);
   szr2->Add(grd_zeiten,szrflags);
 
-  wxBoxSizer * szrButtons = new wxBoxSizer( wxHORIZONTAL );
+  wxBoxSizer * szrButtons = new wxBoxSizer( wxHORIZONTAL);
   szrButtons->Add( btn_show_times,szrflags);
   szrButtons->AddSpacer(290);
   szrButtons->Add(  lables[(int)u_lbl::Stunden],szrflags);
   
-  wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL );
-  szrCRUDForm->Add( szr );
-  szrCRUDForm->Add( szr2 );
-  szrCRUDForm->Add( szrButtons );
+  wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL);
+  szrCRUDForm->Add(title_szr);
+  szrCRUDForm->Add(szr);
+  szrCRUDForm->Add(szr2);
+  szrCRUDForm->Add(szrButtons);
 
   SetSizer(szrCRUDForm);
 
@@ -189,7 +194,6 @@ bool Uebersicht::set_up_combos(){
     db->fill_combobox(combo_boxen[(int)u_cbo::Benutzer], "SELECT * FROM V_MA_Benutzernamen");
     combo_boxen[(int)u_cbo::Benutzer]->AutoComplete(combo_boxen[(int)u_cbo::Benutzer]->GetStrings());
     combo_boxen[(int)u_cbo::Benutzer]->SetValue(default_str);
-    //combo_boxen[(int)u_cbo::Benutzer]->SetEditable(false);
 
     combo_boxen[(int)u_cbo::Monat]->Insert("Alle",0);
     combo_boxen[(int)u_cbo::Monat]->Insert("Januar",1);

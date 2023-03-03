@@ -3,6 +3,9 @@
 Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
 
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
+  title->SetLabel("Zeiterfassung");
+
+
   lables[(int)z_lbl::Mitabeiter] = new wxStaticText(this,wxID_ANY,"Mitarbeiter");
   cbo_benutzer = new wxComboBox(this, wxID_ANY);
   db->fill_combobox(cbo_benutzer, "SELECT * FROM V_MA_Benutzernamen");
@@ -31,6 +34,9 @@ Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB):SubWindow(parent,
   szrflags.Border(wxALL,5);
 
   //Sizer-Pointer werden innerhalb von SetSizer() freigegeben    
+  wxFlexGridSizer * title_szr = new wxFlexGridSizer(1,100,10);
+  title_szr->Add(title);
+
   wxFlexGridSizer * szr = new wxFlexGridSizer(6,10,10);
   szr->Add(lables[(int)z_lbl::Mitabeiter],szrflags);
   szr->Add( cbo_benutzer,szrflags );
@@ -44,13 +50,14 @@ Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB):SubWindow(parent,
   szr->Add(lables[(int)z_lbl::Endzeit],szrflags);
   szr->Add( end_time,szrflags );
 
-  wxBoxSizer * szrButtons = new wxBoxSizer( wxHORIZONTAL );
+  wxBoxSizer * szrButtons = new wxBoxSizer( wxHORIZONTAL);
   szrButtons->Add( btn_submit,szrflags);
   szrButtons->Add( btn_toggle_end_date,szrflags);
   
-  wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL );
-  szrCRUDForm->Add( szr );
-  szrCRUDForm->Add( szrButtons );
+  wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL);
+  szrCRUDForm->Add(title_szr);
+  szrCRUDForm->Add(szr);
+  szrCRUDForm->Add(szrButtons);
   SetSizer(szrCRUDForm);
 
   SetSize(0,0,parent->m_width,parent->m_height);

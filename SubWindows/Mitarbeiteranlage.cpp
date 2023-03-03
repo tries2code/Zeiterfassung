@@ -4,6 +4,8 @@
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
     
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
+    title->SetLabel("Mitarbeiteranlage");
+
     lables[(int)m_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
     lables[(int)m_lbl::Name] = new wxStaticText(this,wxID_ANY,"               Name");
     lables[(int)m_lbl::Benutzername] = new wxStaticText(this,wxID_ANY,"Benutzername");
@@ -46,6 +48,9 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow
     szrflags.Right(); //Allignment
       
   //Sizer-Pointer werden innerhalb von SetSizer() freigegeben
+  wxFlexGridSizer * title_szr = new wxFlexGridSizer(1,100,10);
+    title_szr->Add(title);
+
   wxFlexGridSizer * szr = new wxFlexGridSizer(6,10,10);
 
     szr->Add(lables[(int)m_lbl::Vorname],szrflags);
@@ -93,11 +98,12 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow
     szr3->Add(birth_date,szrflags);
 
 
-  wxBoxSizer * szrButtons = new wxBoxSizer( wxVERTICAL );
+  wxBoxSizer * szrButtons = new wxBoxSizer(wxVERTICAL);
     szrButtons->Add( btn_save,szrflags);
     
 
-  wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL );
+  wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL);
+    szrCRUDForm->Add(title_szr);
     szrCRUDForm->Add( szr);
     szrCRUDForm->Add( szr2);
     
@@ -161,8 +167,8 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
          birth_date->GetDate().GetYear(),
          0,0,0,0
   };
-  wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessageboc
-  wxString strGeburtstag = geburtstag.Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessageboc
+  wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessagebox
+  wxString strGeburtstag = geburtstag.Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessagebox
 
   //Angaben vom Nutzer prüfen lassen
   int choice = wxMessageBox( 
