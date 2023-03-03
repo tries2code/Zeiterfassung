@@ -1,11 +1,9 @@
 #include "Mitarbeiteranlage.hpp"
 
 
-Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
+Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB, this_title){
     
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
-    title->SetLabel("Mitarbeiteranlage");
-
     lables[(int)m_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
     lables[(int)m_lbl::Name] = new wxStaticText(this,wxID_ANY,"               Name");
     lables[(int)m_lbl::Benutzername] = new wxStaticText(this,wxID_ANY,"Benutzername");

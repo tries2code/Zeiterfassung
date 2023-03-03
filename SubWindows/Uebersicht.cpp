@@ -1,11 +1,10 @@
 #include "Uebersicht.hpp"
+#include "wx/string.h"
 
 
-Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
+Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_title):SubWindow(parent, DB,this_title){
   
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
-  title->SetLabel(wxString::FromUTF8("Zeitübersicht"));
-
   lables[(int)u_lbl::Benutzer] = new wxStaticText(this,wxID_ANY,"    Benutzer");
   lables[(int)u_lbl::Monat] = new wxStaticText(this,wxID_ANY,"    Monat");
   lables[(int)u_lbl::Jahr] = new wxStaticText(this,wxID_ANY,"    Jahr");

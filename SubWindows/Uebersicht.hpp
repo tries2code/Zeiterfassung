@@ -23,7 +23,7 @@ enum{
 class Uebersicht : public SubWindow{ 
 
   public:
-    Uebersicht(wxFrame* parent, cppDatabase* DB);
+    Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_title);
     ~Uebersicht();
     void on_change_usr(wxCommandEvent& event);
 

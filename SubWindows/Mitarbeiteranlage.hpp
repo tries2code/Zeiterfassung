@@ -24,7 +24,7 @@ enum{
 class Mitarbeiteranlage : public SubWindow{ 
 
   public:
-    Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB);
+    Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title);
    ~Mitarbeiteranlage(); 
   private:
     wxStaticText* lables[(int)m_lbl::Anzahl_lbl];

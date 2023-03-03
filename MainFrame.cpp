@@ -56,17 +56,18 @@ void MainFrame::OnAbout(wxCommandEvent& event){
 
 void MainFrame::on_zeit(wxCommandEvent& event){
     DestroyChildren();
-    Subwindows[(int)sub::Zeiterfassung] = new Zeiterfassung(this,db);
+    Subwindows[(int)sub::Zeiterfassung] = new Zeiterfassung(this,db,"Zeiterfassung");
 }
 
 void MainFrame::on_show_times(wxCommandEvent& event){
     DestroyChildren();
-    Subwindows[(int)sub::Uebersicht] = new Uebersicht(this,db);
+    wxString title = wxString::FromUTF8("Zeitübersicht");
+    Subwindows[(int)sub::Uebersicht] = new Uebersicht(this,db,title);
 }
 
 void MainFrame::on_new_employee(wxCommandEvent& event){
     DestroyChildren();
-    Subwindows[(int)sub::Mitarbeiteranlage] = new Mitarbeiteranlage(this,db);
+    Subwindows[(int)sub::Mitarbeiteranlage] = new Mitarbeiteranlage(this,db, "Mitarbeiteranlage");
 }
 
 

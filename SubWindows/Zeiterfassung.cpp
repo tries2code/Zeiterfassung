@@ -1,11 +1,8 @@
 #include "Zeiterfassung.hpp"
 
-Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB):SubWindow(parent, DB){
+Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB,this_title){
 
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
-  title->SetLabel("Zeiterfassung");
-
-
   lables[(int)z_lbl::Mitabeiter] = new wxStaticText(this,wxID_ANY,"Mitarbeiter");
   cbo_benutzer = new wxComboBox(this, wxID_ANY);
   db->fill_combobox(cbo_benutzer, "SELECT * FROM V_MA_Benutzernamen");

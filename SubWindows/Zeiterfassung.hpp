@@ -21,7 +21,7 @@ enum{
 class Zeiterfassung : public SubWindow{ 
 
     public:
-        Zeiterfassung(wxFrame* parent, cppDatabase* DB);
+        Zeiterfassung(wxFrame* parent, cppDatabase* DB, const wxString& this_title);
        ~Zeiterfassung();
     private:
 
