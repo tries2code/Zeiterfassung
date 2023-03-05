@@ -11,48 +11,50 @@ TEA::TEA(){
 	int_key = reinterpret_cast<const unsigned int*>(str_key.data());
 }
 
-std::string TEA::decrypt(std::stringstream& str_input) {
+std::string TEA::decrypt(std::stringstream& sstr_in) {
 
-	std::string str_result = "";
+	std::string str_output = "";
 
 	char output_buffer[nchar + 1];
 	output_buffer[nchar] = 0;        // terminator
 	unsigned int* out_ptr = reinterpret_cast<unsigned int*>(output_buffer);
 	unsigned int in_ptr[2];
 
-	str_input.setf(std::ios_base::hex, std::ios_base::basefield); // hex input
+	sstr_in.setf(std::ios_base::hex, std::ios_base::basefield); // hex input
 
-	while(str_input >> in_ptr[0] >> in_ptr[1]){
+	while(sstr_in >> in_ptr[0] >> in_ptr[1]){
 		decipher(in_ptr, out_ptr);
-		str_result = str_result + output_buffer;
+		str_output = str_output + output_buffer;
 	}
-	while(str_result.find_last_of('0')== str_result.length()-1)str_result.pop_back();
-	return str_result;
+	
+	str_output = str_output.substr(0,str_output.find("#~;EOS:~#"));
+	return str_output;
 }
 
-std::string TEA::encrypt(std::stringstream& str_input) {
+std::string TEA::encrypt(std::stringstream& sstr_in) {
 
-	std::stringstream str_result;
-	str_result << std::hex;
+	std::stringstream sstr_input,sstr_output;
+	sstr_input << sstr_in.str() << "#~;EOS:~#";
+	sstr_output << std::hex;
 	
 	char input_buffer[nchar];
 	unsigned int* in_ptr = reinterpret_cast<unsigned int*>(input_buffer);
 	unsigned int out_ptr[2];
 	int count = 0;
 
-	while(str_input.get(input_buffer[count])){
+	while(sstr_input.get(input_buffer[count])){
 		if (++count == nchar) {
 			encipher(in_ptr, out_ptr);
 			count = 0;
-			str_result << std::setw(8) << std::setfill('0') << out_ptr[0] << ' ' << std::setw(8) << std::setfill('0') << out_ptr[1] << ' ';
+			sstr_output << std::setw(8) << std::setfill('0') << out_ptr[0] << ' ' << std::setw(8) << std::setfill('0') << out_ptr[1] << ' ';
 		}
 	}
 	if(count){
 		while (count != nchar)input_buffer[count++] = '0';
 		encipher(in_ptr, out_ptr);
-		str_result << out_ptr[0] << ' ' << out_ptr[1] << ' ';
+		sstr_output << out_ptr[0] << ' ' << out_ptr[1] << ' ';
 	}
-	return str_result.str();
+	return sstr_output.str();
 }
 
 
