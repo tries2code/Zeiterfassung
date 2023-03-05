@@ -24,10 +24,10 @@ bool cppDatabase::Init(){
 
             //Passwort entschlüsseln
             TEA crypt{};
-            std::stringstream str_to_decrypt;
-	        str_to_decrypt<<std::hex;
-	        str_to_decrypt = (std::stringstream)pwd;
-            std::strcpy(pwd,crypt.decrypt(str_to_decrypt).c_str());
+            std::stringstream sstr_to_decrypt;
+	        sstr_to_decrypt<<std::hex;
+	        sstr_to_decrypt = (std::stringstream)pwd;
+            std::strcpy(pwd,crypt.decrypt(sstr_to_decrypt).c_str());
         }
 
         conn_db = mysql_real_connect(alpha_db, host, usr, pwd, db, 0, NULL, 0);
@@ -44,7 +44,7 @@ bool cppDatabase::Init(){
             delete pwd;
             delete db;
         }
-
+        
         return true;
     }
     catch(...){

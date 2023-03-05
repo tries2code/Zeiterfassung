@@ -37,5 +37,6 @@ class Mitarbeiteranlage : public SubWindow{
      
 
     void on_save(wxCommandEvent& event);
+    bool check_entries();
     wxDECLARE_EVENT_TABLE();
 };

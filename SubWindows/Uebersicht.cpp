@@ -180,6 +180,8 @@ bool Uebersicht::set_up_grid(){
       grd_zeiten->SetRowLabelValue(intRow, "");
     }
     grd_zeiten->SetColLabelAlignment(50, 300);
+    grd_zeiten->DisableDragColSize();
+    grd_zeiten->DisableDragRowSize();
     return true;
   }
   catch(...){

@@ -11,7 +11,7 @@ TEA::TEA(){
 	int_key = reinterpret_cast<const unsigned int*>(str_key.data());
 }
 
-std::string TEA::decrypt(std::stringstream& sstr_in) {
+std::string TEA::decrypt(std::stringstream& sstr_in){
 
 	std::string str_output = "";
 
@@ -31,7 +31,7 @@ std::string TEA::decrypt(std::stringstream& sstr_in) {
 	return str_output;
 }
 
-std::string TEA::encrypt(std::stringstream& sstr_in) {
+std::string TEA::encrypt(std::stringstream& sstr_in){
 
 	std::stringstream sstr_input,sstr_output;
 	sstr_input << sstr_in.str() << "#~;EOS:~#";
@@ -57,9 +57,6 @@ std::string TEA::encrypt(std::stringstream& sstr_in) {
 	return sstr_output.str();
 }
 
-
-
-
 void TEA::encipher(const unsigned int* const v, unsigned int* const w) {
 
 	unsigned int y = v[0];
@@ -75,6 +72,7 @@ void TEA::encipher(const unsigned int* const v, unsigned int* const w) {
 	w[0] = y;
 	w[1] = z;
 }
+
 void TEA::decipher(const unsigned int* const v, unsigned int* const w) {
 	
 	unsigned int y = v[0];

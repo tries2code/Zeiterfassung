@@ -1,4 +1,5 @@
 #include "Mitarbeiteranlage.hpp"
+#include <string>
 
 
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB, this_title){
@@ -114,43 +115,9 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
 }
 
 void Mitarbeiteranlage::on_save(wxCommandEvent& event){
- 
- //Prüfung Benutzername
-  wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"')";
-  wxString check_user = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
-  if(check_user != "0"){
-    wxMessageBox( 
-      wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen aus."),
-      wxString::FromUTF8("Benutzername ist bereits vergeben!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
-
-  //Prüfung auf negative Altersangabe
-  if(wxDateTime::Now().GetTicks() < birth_date->GetDate().GetTicks()){
-    wxMessageBox( 
-      "Altersangabe unplausibel!",
-      wxString::FromUTF8("Speichern nicht möglich!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
-
-  //Prüfung Mindestalter
-  int min_age = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')").c_str());
-  int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
-  if(this_age < min_age){
-    wxMessageBox( 
-      wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + std::to_string(min_age) + " Jahre.\n"
-      +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
-      + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
-      + " ist noch zu jung.",
-      wxString::FromUTF8("Speichern nicht möglich!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
+  
+  //Eingaben prüfen
+  if(!check_entries())return;
 
   //Datum formatieren
   wxDateTime vertragsstart = {
@@ -181,11 +148,11 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
   wxYES_NO|wxICON_ERROR
   );
 
+  //Mitarbeiter anlegen
   if(choice == 2){
     strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));  //Formatierung für DB-Eintrag
     strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));        //Formatierung für DB-Eintrag
-    //Mitarbeiter anlegen
-    strSQL =  "call SP_INSERT_MA('"
+    wxString strSQL =  "call SP_INSERT_MA('"
     +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
     +wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
     +wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"','"
@@ -218,6 +185,85 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
     );
   }
 }
+
+bool Mitarbeiteranlage::check_entries(){
+
+  //Prüfung ob alle Felder ausgefüllt sind
+  for(int i = 0; i < (int)m_tc::Anzahl_tc; ++i){
+    if(wxString::FromUTF8(text_ctrls[i]->GetValue().mb_str(wxConvUTF8)).length() == 0){
+      wxMessageBox( 
+      wxString::FromUTF8("Daten können nicht gespeichert werden!\nDas Feld [") 
+      + wxString::FromUTF8(lables[i]->GetLabelText().mb_str(wxConvUTF8)).Trim(false)
+      + wxString::FromUTF8("] enthält keinen Wert. "),
+      wxString::FromUTF8("Angaben unvollständig!"),
+      wxOK|wxICON_ERROR
+    );
+    return false;
+    }
+  }
+
+  //Prüfung ob Tarif ausgewählt wurde
+  if(cbo_tarife->GetValue() == default_str){
+      wxMessageBox( 
+      wxString::FromUTF8("Daten können nicht gespeichert werden!\nEs wurde kein [Tarif] ausgewählt."),
+      wxString::FromUTF8("Angaben unvollständig!"),
+      wxOK|wxICON_ERROR
+    );
+    return false;
+  }
+
+  //Prüfung Benutzername Mindestlänge
+  int min_usrname_len = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_usrname_len')").c_str());
+  int usrname_len = text_ctrls[(int)m_tc::Benutzername]->GetValue().length();
+  if(usrname_len < min_usrname_len){
+    wxMessageBox( 
+      wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen mit mindestens ")
+      + std::to_string(min_usrname_len) + " Zeichen.",
+      wxString::FromUTF8("Benutzername ist zu kurz!"),
+      wxOK|wxICON_ERROR
+    );
+    return false;
+  }
+
+  //Prüfung ob Benutzername bereits vergeben
+  wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"')";
+  wxString check_user = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+  if(check_user != "0"){
+    wxMessageBox( 
+      wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen aus."),
+      wxString::FromUTF8("Benutzername ist bereits vergeben!"),
+      wxOK|wxICON_ERROR
+    );
+    return false;
+  }
+
+  //Prüfung auf negative Altersangabe(Wichtig, da sonst bei zu großem Negativ-Wert die nächste Prüfung versagt)
+  if(wxDateTime::Now().GetTicks() < birth_date->GetDate().GetTicks()){
+    wxMessageBox( 
+      "Altersangabe unplausibel!",
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+    );
+    return false;
+  }
+
+  //Prüfung Mindestalter
+  int min_age = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')").c_str());
+  int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
+  if(this_age < min_age){
+    wxMessageBox( 
+      wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + std::to_string(min_age) + " Jahre.\n"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
+      + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
+      + " ist noch zu jung.",
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+    );
+    return false;
+  }
+  return true;
+}
+
 
 Mitarbeiteranlage::~Mitarbeiteranlage(){
   for(wxStaticText* st : lables)delete st;
