@@ -17,15 +17,15 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
     lables[(int)m_lbl::Geburtstag] = new wxStaticText(this,wxID_ANY,"Geburtstag");
     lables[(int)m_lbl::Tarif] = new wxStaticText(this,wxID_ANY,"Tarif");
 
-    text_ctrls[(int)m_tc::Vorname] = new wxTextCtrl(this,wxID_ANY,default_str);
-    text_ctrls[(int)m_tc::Name] = new wxTextCtrl(this,wxID_ANY,default_str);
-    text_ctrls[(int)m_tc::Benutzername] = new wxTextCtrl(this,wxID_ANY,default_str);
-    text_ctrls[(int)m_tc::Strasse] = new wxTextCtrl(this,wxID_ANY,default_str);
-    text_ctrls[(int)m_tc::Hausnummer] = new wxTextCtrl(this,wxID_ANY,default_str);
-    text_ctrls[(int)m_tc::PLZ] = new wxTextCtrl(this,wxID_ANY,default_str);
-    text_ctrls[(int)m_tc::Ort] = new wxTextCtrl(this,wxID_ANY,default_str);
+    text_ctrls[(int)m_tc::Vorname] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::Name] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::Benutzername] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::Strasse] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::Hausnummer] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::PLZ] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::Ort] = new wxTextCtrl(this,wxID_ANY);
     text_ctrls[(int)m_tc::Land] = new wxTextCtrl(this,wxID_ANY,"Deutschland");
-    text_ctrls[(int)m_tc::SVNummer] = new wxTextCtrl(this,wxID_ANY,default_str);
+    text_ctrls[(int)m_tc::SVNummer] = new wxTextCtrl(this,wxID_ANY);
     for(wxTextCtrl* t : text_ctrls)t->SetInitialSize({150,30});
 
 

@@ -20,6 +20,7 @@
             "MainFrame.cpp",
             "Tools/cppDatabase.cpp",
             "Tools/SubWindow.cpp",
+            "Tools/TEA.cpp",
             "Tools/XML.cpp",
             "main.cpp",
             "-o",

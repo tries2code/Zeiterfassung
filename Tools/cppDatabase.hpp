@@ -8,6 +8,8 @@
 #include <wx/string.h>
 
 #include "XML.hpp"
+#include "TEA.hpp"
+
 
 class cppDatabase{
         

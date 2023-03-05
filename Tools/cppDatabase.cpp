@@ -21,6 +21,13 @@ bool cppDatabase::Init(){
             usr  = xml_reader->get_XML_field("usr");
             pwd  = xml_reader->get_XML_field("password");
             db   = xml_reader->get_XML_field("db_name");
+
+            //Passwort entschlüsseln
+            TEA crypt{};
+            std::stringstream str_to_decrypt;
+	        str_to_decrypt<<std::hex;
+	        str_to_decrypt = (std::stringstream)pwd;
+            std::strcpy(pwd,crypt.decrypt(str_to_decrypt).c_str());
         }
 
         conn_db = mysql_real_connect(alpha_db, host, usr, pwd, db, 0, NULL, 0);
