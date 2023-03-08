@@ -1,4 +1,6 @@
 #include "Mitarbeiteranlage.hpp"
+#include "wx/datetime.h"
+#include "wx/gtk/cursor.h"
 #include <string>
 
 
@@ -26,7 +28,7 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
     text_ctrls[(int)m_tc::PLZ] = new wxTextCtrl(this,wxID_ANY);
     text_ctrls[(int)m_tc::Ort] = new wxTextCtrl(this,wxID_ANY);
     text_ctrls[(int)m_tc::Land] = new wxTextCtrl(this,wxID_ANY,"Deutschland");
-    text_ctrls[(int)m_tc::SVNummer] = new wxTextCtrl(this,wxID_ANY);
+    text_ctrls[(int)m_tc::SVNummer] = new wxTextCtrl(this,ID_SvNr);
     for(wxTextCtrl* t : text_ctrls)t->SetInitialSize({150,30});
 
 
@@ -127,7 +129,7 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
          0,0,0,0
   };
   wxDateTime geburtstag = {
-         birth_date->GetDate().GetDay(), 
+          birth_date->GetDate().GetDay(), 
         birth_date->GetDate().GetMonth(),
          birth_date->GetDate().GetYear(),
          0,0,0,0
@@ -261,8 +263,87 @@ bool Mitarbeiteranlage::check_entries(){
     );
     return false;
   }
-  return true;
+
+  //Prüfung SV-Nummer
+    //SV-RV Bereich
+    wxString str_rvbr_nr = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(0,1);
+    std::string list_rebr_nr = db->get_string_from_db("call SP_GET_Konfiguration('list_rvbr_nr')");
+    int index = list_rebr_nr.find(str_rvbr_nr);
+    if(index<0){
+      wxMessageBox( 
+      wxString::FromUTF8("Die SV-Nummer enthält keine gültige RV-Bereichsnummer."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+    //SV-Geburtstag
+    wxString str_sv_birthday = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(3,8);
+    wxDateTime date = birth_date->GetDate();
+    wxString str_birthday = date.Format(wxT("%d%m%y"));
+    if(str_sv_birthday != str_birthday){
+      wxMessageBox( 
+      wxString::FromUTF8("Die SV-Nummer enthält ein abweichendes Geburtsdatum."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+    //SV-Erster Buchstabe des Nachnamens
+    std::string str_sv_first_name_letter = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(10,10).ToStdString();
+    std::string str_first_name_letter = text_ctrls[(int)m_tc::Name]->GetValue().ToStdString();
+    if(std::tolower(str_sv_first_name_letter[0]) != std::tolower(str_first_name_letter[0])){
+      wxMessageBox( 
+      wxString::FromUTF8("Der Buchstabe der SV-Nummer stimmt nicht mit dem Anfangbuchstaben des names überein."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+    //SV-Mänlich/weiblich /Prüfziffer
+    wxString str_rest = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(12,14);
+    bool digits_only = std::regex_match(str_rest.ToStdString(), std::regex("[0-9]+"));
+    if(!digits_only){
+      wxMessageBox( 
+      wxString::FromUTF8("Die letzten drei Ziffern der SV-Nummer dürfen nur Zahlen sein."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+
+  return false;
 }
+
+
+void Mitarbeiteranlage::style_svnr_syntax(wxCommandEvent& event){
+  try{
+    
+    switch(text_ctrls[(int)m_tc::SVNummer]->GetValue().length()){
+      case 2: case 9: case 11:
+        text_ctrls[(int)m_tc::SVNummer]->SetValue(text_ctrls[(int)m_tc::SVNummer]->GetValue() + "-");
+        text_ctrls[(int)m_tc::SVNummer]->SetInsertionPoint(text_ctrls[(int)m_tc::SVNummer]->GetValue().length());
+      break;
+      case 16:
+        text_ctrls[(int)m_tc::SVNummer]->SetValue(text_ctrls[(int)m_tc::SVNummer]->GetValue().substr(0,15));
+        text_ctrls[(int)m_tc::SVNummer]->SetInsertionPoint(text_ctrls[(int)m_tc::SVNummer]->GetValue().length());
+      break;
+    }
+  }
+  catch(...){
+    std::cerr<<"FEHLER in Mitarbeiteranlage::check_svnr_syntax!\n";
+  }
+}
+
+
+
+
+
+
+
+
+
+
 
 
 Mitarbeiteranlage::~Mitarbeiteranlage(){

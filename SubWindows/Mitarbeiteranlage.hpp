@@ -1,3 +1,5 @@
+#include <regex>
+
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include <wx/frame.h>
@@ -17,7 +19,7 @@ enum class m_tc{
 };
 
 enum{
-   ID_Save_MA
+   ID_Save_MA, ID_SvNr
 };
 
 
@@ -38,5 +40,6 @@ class Mitarbeiteranlage : public SubWindow{
 
     void on_save(wxCommandEvent& event);
     bool check_entries();
+    void style_svnr_syntax(wxCommandEvent& event);
     wxDECLARE_EVENT_TABLE();
 };

@@ -28,6 +28,7 @@ wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Mitarbeiteranlage, SubWindow)
     EVT_BUTTON(ID_Save_MA, Mitarbeiteranlage::on_save)
+    EVT_TEXT(ID_SvNr, Mitarbeiteranlage::style_svnr_syntax)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);
