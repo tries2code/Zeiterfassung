@@ -1,10 +1,12 @@
 #include "Mitarbeiteranlage.hpp"
 #include "wx/datetime.h"
 #include "wx/gtk/cursor.h"
+#include "wx/textctrl.h"
 #include <string>
 
 
-Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB, this_title){
+Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title)
+:SubWindow(parent, DB, this_title){
     
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
     lables[(int)m_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
@@ -189,82 +191,121 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
 }
 
 bool Mitarbeiteranlage::check_entries(){
-
-  //Prüfung ob alle Felder ausgefüllt sind
-  for(int i = 0; i < (int)m_tc::Anzahl_tc; ++i){
-    if(wxString::FromUTF8(text_ctrls[i]->GetValue().mb_str(wxConvUTF8)).length() == 0){
-      wxMessageBox( 
-      wxString::FromUTF8("Daten können nicht gespeichert werden!\nDas Feld [") 
-      + wxString::FromUTF8(lables[i]->GetLabelText().mb_str(wxConvUTF8)).Trim(false)
-      + wxString::FromUTF8("] enthält keinen Wert. "),
-      wxString::FromUTF8("Angaben unvollständig!"),
-      wxOK|wxICON_ERROR
-    );
-    return false;
+  try{
+    //Prüfung ob alle Felder ausgefüllt sind
+    for(int i = 0; i < (int)m_tc::Anzahl_tc; ++i){
+      if(wxString::FromUTF8(text_ctrls[i]->GetValue().mb_str(wxConvUTF8)).length() == 0){
+        wxMessageBox( 
+        wxString::FromUTF8("Daten können nicht gespeichert werden!\nDas Feld [") 
+        + wxString::FromUTF8(lables[i]->GetLabelText().mb_str(wxConvUTF8)).Trim(false)
+        + wxString::FromUTF8("] enthält keinen Wert. "),
+        wxString::FromUTF8("Angaben unvollständig!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+      }
     }
-  }
 
-  //Prüfung ob Tarif ausgewählt wurde
-  if(cbo_tarife->GetValue() == default_str){
+    //Prüfung ob Tarif ausgewählt wurde
+    if(cbo_tarife->GetValue() == default_str){
+        wxMessageBox( 
+        wxString::FromUTF8("Daten können nicht gespeichert werden!\nEs wurde kein [Tarif] ausgewählt."),
+        wxString::FromUTF8("Angaben unvollständig!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+
+    //Prüfung Benutzername Mindestlänge
+    int min_usrname_len = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_usrname_len')").c_str());
+    int usrname_len = text_ctrls[(int)m_tc::Benutzername]->GetValue().length();
+    if(usrname_len < min_usrname_len){
       wxMessageBox( 
-      wxString::FromUTF8("Daten können nicht gespeichert werden!\nEs wurde kein [Tarif] ausgewählt."),
-      wxString::FromUTF8("Angaben unvollständig!"),
-      wxOK|wxICON_ERROR
-    );
-    return false;
-  }
+        wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen mit mindestens ")
+        + std::to_string(min_usrname_len) + " Zeichen.",
+        wxString::FromUTF8("Benutzername ist zu kurz!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+    }
 
-  //Prüfung Benutzername Mindestlänge
-  int min_usrname_len = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_usrname_len')").c_str());
-  int usrname_len = text_ctrls[(int)m_tc::Benutzername]->GetValue().length();
-  if(usrname_len < min_usrname_len){
-    wxMessageBox( 
-      wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen mit mindestens ")
-      + std::to_string(min_usrname_len) + " Zeichen.",
-      wxString::FromUTF8("Benutzername ist zu kurz!"),
-      wxOK|wxICON_ERROR
-    );
-    return false;
-  }
+    //Prüfung ob Benutzername bereits vergeben
+    wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"')";
+    wxString check_user = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+    if(check_user != "0"){
+      wxMessageBox( 
+        wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen aus."),
+        wxString::FromUTF8("Benutzername ist bereits vergeben!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+    }
 
-  //Prüfung ob Benutzername bereits vergeben
-  wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"')";
-  wxString check_user = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
-  if(check_user != "0"){
-    wxMessageBox( 
-      wxString::FromUTF8("Daten können nicht gespeichert werden!\nBitte wählen Sie einen anderen Benutzernamen aus."),
-      wxString::FromUTF8("Benutzername ist bereits vergeben!"),
-      wxOK|wxICON_ERROR
-    );
-    return false;
-  }
+    //Prüfung auf negative Altersangabe(Wichtig, da sonst bei zu großem Negativ-Wert die nächste Prüfung versagt)
+    if(wxDateTime::Now().GetTicks() < birth_date->GetDate().GetTicks()){
+      wxMessageBox( 
+        "Altersangabe unplausibel!",
+        wxString::FromUTF8("Speichern nicht möglich!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+    }
 
-  //Prüfung auf negative Altersangabe(Wichtig, da sonst bei zu großem Negativ-Wert die nächste Prüfung versagt)
-  if(wxDateTime::Now().GetTicks() < birth_date->GetDate().GetTicks()){
-    wxMessageBox( 
-      "Altersangabe unplausibel!",
+    //Prüfung PLZ
+    bool five_digits= std::regex_match(text_ctrls[(int)m_tc::PLZ]->GetValue().ToStdString()
+                                      ,std::regex("^\\d{5}$"));
+    if(!five_digits){
+      wxMessageBox( 
+      wxString::FromUTF8("Bitte überprüfen Sie die Postleitzahl."),
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
-    );
-    return false;
-  }
+      );
+      return false;
+    }
 
-  //Prüfung Mindestalter
-  int min_age = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')").c_str());
-  int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
-  if(this_age < min_age){
-    wxMessageBox( 
-      wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + std::to_string(min_age) + " Jahre.\n"
-      +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
-      + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
-      + " ist noch zu jung.",
+    //Prüfung Mindestalter
+    int min_age = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')").c_str());
+    int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
+    if(this_age < min_age){
+      wxMessageBox( 
+        wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + std::to_string(min_age) + " Jahre.\n"
+        +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) 
+        + " " + wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
+        + " ist noch zu jung.",
+        wxString::FromUTF8("Speichern nicht möglich!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+
+    //Prüfungen SV-Nummer
+    //SV Länge
+    if(text_ctrls[(int)m_tc::SVNummer]->GetValue().length()<15){
+      wxMessageBox( 
+      wxString::FromUTF8("Die SV-Nummer ist zur kurz."),
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
-    );
-    return false;
-  }
-
-  //Prüfung SV-Nummer
+      );
+      return false;
+    }
+    //SV Format
+    std::string str_sv = text_ctrls[(int)m_tc::SVNummer]->GetValue().ToStdString();
+    bool sv_format = std::regex_match(str_sv,std::regex("^\\d{2}-\\d{6}-[a-zA-Z]-\\d{3}$"));
+    if(!sv_format){
+      //Wert muss komplett neu eingegeben werden, wenn die Bindestriche an den vorgegebenen Stellen nicht vorhanden sind
+      bool keep_str = (str_sv[2] == '-' && str_sv[9] == '-' && str_sv[11] == '-');
+      std::string msg = "Die SV-Nummer hat das falsche Format.";
+      if(!keep_str){
+        msg = msg + "\nBitte erneut eingeben.";
+        text_ctrls[(int)m_tc::SVNummer]->Clear();
+      }
+      wxMessageBox( 
+      wxString::FromUTF8(msg),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
     //SV-RV Bereich
     wxString str_rvbr_nr = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(0,1);
     std::string list_rebr_nr = db->get_string_from_db("call SP_GET_Konfiguration('list_rvbr_nr')");
@@ -279,8 +320,7 @@ bool Mitarbeiteranlage::check_entries(){
     }
     //SV-Geburtstag
     wxString str_sv_birthday = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(3,8);
-    wxDateTime date = birth_date->GetDate();
-    wxString str_birthday = date.Format(wxT("%d%m%y"));
+    wxString str_birthday = birth_date->GetDate().Format(wxT("%d%m%y"));
     if(str_sv_birthday != str_birthday){
       wxMessageBox( 
       wxString::FromUTF8("Die SV-Nummer enthält ein abweichendes Geburtsdatum."),
@@ -290,11 +330,11 @@ bool Mitarbeiteranlage::check_entries(){
       return false;
     }
     //SV-Erster Buchstabe des Nachnamens
-    std::string str_sv_first_name_letter = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(10,10).ToStdString();
-    std::string str_first_name_letter = text_ctrls[(int)m_tc::Name]->GetValue().ToStdString();
-    if(std::tolower(str_sv_first_name_letter[0]) != std::tolower(str_first_name_letter[0])){
+    std::string str_sv_1st_c_name = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(10,10).ToStdString();
+    std::string str_1st_c_name = text_ctrls[(int)m_tc::Name]->GetValue().ToStdString();
+    if(std::tolower(str_sv_1st_c_name[0]) != std::tolower(str_1st_c_name[0])){
       wxMessageBox( 
-      wxString::FromUTF8("Der Buchstabe der SV-Nummer stimmt nicht mit dem Anfangbuchstaben des names überein."),
+      wxString::FromUTF8("Der Buchstabe der SV-Nummer stimmt nicht mit dem Anfangbuchstaben des Names überein."),
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
       );
@@ -302,8 +342,8 @@ bool Mitarbeiteranlage::check_entries(){
     }
     //SV-Mänlich/weiblich /Prüfziffer
     wxString str_rest = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(12,14);
-    bool digits_only = std::regex_match(str_rest.ToStdString(), std::regex("[0-9]+"));
-    if(!digits_only){
+    bool sv_digits_only = std::regex_match(str_rest.ToStdString(), std::regex("^\\d{3}$"));
+    if(!sv_digits_only){
       wxMessageBox( 
       wxString::FromUTF8("Die letzten drei Ziffern der SV-Nummer dürfen nur Zahlen sein."),
       wxString::FromUTF8("Speichern nicht möglich!"),
@@ -312,39 +352,37 @@ bool Mitarbeiteranlage::check_entries(){
       return false;
     }
 
-  return false;
+    return true;
+  }
+  catch(...){
+    std::cerr<<"FEHLER in Mitarbeiteranlage::check_entries!\n";
+    return false;
+  }
 }
 
-
 void Mitarbeiteranlage::style_svnr_syntax(wxCommandEvent& event){
+  //Setzt Bindestriche beim eintragen der SV-Nummer
   try{
-    
-    switch(text_ctrls[(int)m_tc::SVNummer]->GetValue().length()){
-      case 2: case 9: case 11:
-        text_ctrls[(int)m_tc::SVNummer]->SetValue(text_ctrls[(int)m_tc::SVNummer]->GetValue() + "-");
-        text_ctrls[(int)m_tc::SVNummer]->SetInsertionPoint(text_ctrls[(int)m_tc::SVNummer]->GetValue().length());
-      break;
-      case 16:
-        text_ctrls[(int)m_tc::SVNummer]->SetValue(text_ctrls[(int)m_tc::SVNummer]->GetValue().substr(0,15));
-        text_ctrls[(int)m_tc::SVNummer]->SetInsertionPoint(text_ctrls[(int)m_tc::SVNummer]->GetValue().length());
-      break;
+    int cur_pos = text_ctrls[(int)m_tc::SVNummer]->GetInsertionPoint();
+    int len = text_ctrls[(int)m_tc::SVNummer]->GetValue().length();
+    //Bindestriche werden nur bei fortlaufender Eingabe hinzugefügt, Korrekturen mitten im String sind möglich
+    if(cur_pos == len){
+      switch(text_ctrls[(int)m_tc::SVNummer]->GetValue().length()){
+        case 2: case 9: case 11:
+          text_ctrls[(int)m_tc::SVNummer]->SetValue(text_ctrls[(int)m_tc::SVNummer]->GetValue() + "-");
+          text_ctrls[(int)m_tc::SVNummer]->SetInsertionPoint(text_ctrls[(int)m_tc::SVNummer]->GetValue().length());
+        break;
+        case 16:
+          text_ctrls[(int)m_tc::SVNummer]->SetValue(text_ctrls[(int)m_tc::SVNummer]->GetValue().substr(0,15));
+          text_ctrls[(int)m_tc::SVNummer]->SetInsertionPoint(text_ctrls[(int)m_tc::SVNummer]->GetValue().length());
+        break;
+      }
     }
   }
   catch(...){
     std::cerr<<"FEHLER in Mitarbeiteranlage::check_svnr_syntax!\n";
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 Mitarbeiteranlage::~Mitarbeiteranlage(){
   for(wxStaticText* st : lables)delete st;
