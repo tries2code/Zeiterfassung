@@ -9,9 +9,10 @@ class App: public wxApp{
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT,  MainFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
-    EVT_MENU(ID_Zeit, MainFrame::on_zeit)
+    EVT_MENU(ID_Zeiterfassung, MainFrame::on_zeit)
     EVT_MENU(ID_Uebersicht, MainFrame::on_show_times)
     EVT_MENU(ID_Mitarbeiteranlage, MainFrame::on_new_employee)
+    EVT_MENU(ID_Verwaltung, MainFrame::on_edit_employee)
 wxEND_EVENT_TABLE()
 
 //Event Table muss für jedes Subfenster erstellt werden
@@ -29,6 +30,9 @@ wxEND_EVENT_TABLE()
 wxBEGIN_EVENT_TABLE(Mitarbeiteranlage, SubWindow)
     EVT_BUTTON(ID_Save_MA, Mitarbeiteranlage::on_save)
     EVT_TEXT(ID_SvNr, Mitarbeiteranlage::style_svnr_syntax)
+wxEND_EVENT_TABLE()
+
+wxBEGIN_EVENT_TABLE(Verwaltung, SubWindow)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);

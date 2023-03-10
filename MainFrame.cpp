@@ -2,7 +2,7 @@
 
 
 using time_point = std::chrono::system_clock::time_point;
-wxString serializeTimePoint( const time_point& time, const std::string& format);
+wxString get_time_point(const time_point& this_time, const std::string& format);
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size, cppDatabase* DB)
           :db(DB),wxFrame(NULL, wxID_ANY, title, pos, size){
@@ -14,27 +14,29 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 
     wxMenu *menu_Zeit = new wxMenu;
-    menu_Zeit->Append(ID_Zeit, "&Erfassen \tCtrl-E", "Hier ist die Zeiterfassung.");
+    menu_Zeit->Append(ID_Zeiterfassung, "&Erfassen \tCtrl-E", "Hier ist die Zeiterfassung.");
     menu_Zeit->AppendSeparator();
     menu_Zeit->Append(ID_Uebersicht, wxString::FromUTF8("&Übersicht \tCtrl-U"), "Hier ist die Auflistung.");
     menu_Zeit->AppendSeparator();
     menu_Zeit->Append(wxID_EXIT, "&Beenden \tCtrl-Q", "Programm beenden.");
 
-    wxMenu *menu_Administration = new wxMenu;
-    menu_Administration->Append(ID_Mitarbeiteranlage,"&Anlegen \tCtrl-M", wxString::FromUTF8("Neue Mitarbeiter anlegen."));
+    wxMenu *menu_Mitarbeiter = new wxMenu;
+    menu_Mitarbeiter->Append(ID_Mitarbeiteranlage,"&Anlegen \tCtrl-M", wxString::FromUTF8("Neue Mitarbeiter anlegen."));
+    menu_Mitarbeiter->Append(ID_Verwaltung,"&Verwalten \tCtrl-W", wxString::FromUTF8("Mitarbeiter verwalten."));
+
     wxMenu *menu_Hilfe = new wxMenu;
     menu_Hilfe->Append(wxID_ABOUT,"&Hilfe \tCtrl-H", wxString::FromUTF8("Nützliche Informationen."));
     
     wxMenuBar *menu_Bar = new wxMenuBar;
     menu_Bar->Append( menu_Zeit, "&Zeit");
-    menu_Bar->Append( menu_Administration, "&Mitarbeiter");
+    menu_Bar->Append( menu_Mitarbeiter, "&Mitarbeiter");
     menu_Bar->Append( menu_Hilfe, "&Hilfe");
     menu_Bar->SetBackgroundColour(wxColour(255,136,0,75));
     SetMenuBar(menu_Bar);
 
     CreateStatusBar();
     time_point input = std::chrono::system_clock::now();
-    SetStatusText( serializeTimePoint(input, "Angemeldet seit: %H:%M:%S Uhr am %d.%m.%Y"));
+    SetStatusText( get_time_point(input, "Angemeldet seit: %H:%M:%S Uhr am %d.%m.%Y"));
     
     //Verhindert das man die Fenstergröße ändern kann(entfernt das Viereck-Icon aus der control-bar)
     this->SetSizeHints(this->m_width,this->m_height,this->m_width,this->m_height);
@@ -70,13 +72,16 @@ void MainFrame::on_new_employee(wxCommandEvent& event){
     Subwindows[(int)sub::Mitarbeiteranlage] = new Mitarbeiteranlage(this,db, "Mitarbeiteranlage");
 }
 
+void MainFrame::on_edit_employee(wxCommandEvent& event){
+    DestroyChildren();
+    Subwindows[(int)sub::Verwaltung] = new Verwaltung(this,db, "Mitarbeiterverwaltung");
+}
 
 ///////////////Hilfsfunktionen///////////////////////
 
-wxString serializeTimePoint( const time_point& time, const std::string& format)
-{
-    std::time_t tt = std::chrono::system_clock::to_time_t(time);
-    std::tm tm = *std::localtime(&tt); //Locale time-zone, usually UTC(std::::gmtime()) by default.
+wxString get_time_point(const time_point& this_ime, const std::string& format){
+    std::time_t time = std::chrono::system_clock::to_time_t(this_ime);
+    std::tm tm = *std::localtime(&time); //Locale time-zone, usually UTC(std::::gmtime()) by default.
     std::stringstream ss;
     ss << std::put_time( &tm, format.c_str() );
     return (wxString)ss.str();

@@ -1,8 +1,9 @@
-#include "Uebersicht.hpp"
+#include "Zeituebersicht.hpp"
 #include "wx/string.h"
 
 
-Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_title):SubWindow(parent, DB,this_title){
+Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_title)
+:SubWindow(parent, DB,this_title){
   
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
   lables[(int)u_lbl::Benutzer] = new wxStaticText(this,wxID_ANY,"    Benutzer");
@@ -116,7 +117,6 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
     std::cerr<<"FEHLER in Uebersicht::on_show_times!\n";
   }
 }
-
 
 void Uebersicht::on_change_usr(wxCommandEvent& event){
   try{
