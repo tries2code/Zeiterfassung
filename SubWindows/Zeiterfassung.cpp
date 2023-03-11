@@ -1,6 +1,9 @@
 #include "Zeiterfassung.hpp"
 
 Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB,this_title){
+  
+  //Setzt das Datumsformat von wxDatePickerCtrl
+  wxLocale l{wxLANGUAGE_GERMAN_GERMANY,wxLOCALE_DONT_LOAD_DEFAULT};
 
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
   lables[(int)z_lbl::Mitabeiter] = new wxStaticText(this,wxID_ANY,"Mitarbeiter");
@@ -11,13 +14,13 @@ Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB, const wxString& t
 
 
   lables[(int)z_lbl::Startdatum] = new wxStaticText(this,wxID_ANY,"Startdatum");
-  start_date = new wxGtkCalendarCtrl(this,wxID_ANY,wxDefaultDateTime);
+  start_date = new wxDatePickerCtrl(this,wxID_ANY,wxDefaultDateTime);
   
   lables[(int)z_lbl::Startzeit] = new wxStaticText(this,-1,"Startzeit");
   start_time = new wxTimePickerCtrl(this,wxID_ANY,wxDefaultDateTime);
 
   lables[(int)z_lbl::Enddatum] = new wxStaticText(this,wxID_ANY,"Enddatum");
-  end_date = new wxGtkCalendarCtrl(this,wxID_ANY,wxDefaultDateTime);
+  end_date = new wxDatePickerCtrl(this,wxID_ANY,wxDefaultDateTime);
 
   lables[(int)z_lbl::Endzeit] = new wxStaticText(this,wxID_ANY,"Endzeit");
   end_time = new wxTimePickerCtrl(this,wxID_ANY,wxDefaultDateTime);
@@ -34,9 +37,12 @@ Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB, const wxString& t
   wxFlexGridSizer * title_szr = new wxFlexGridSizer(1,100,10);
   title_szr->Add(title);
 
-  wxFlexGridSizer * szr = new wxFlexGridSizer(6,10,10);
+  wxFlexGridSizer * szr = new wxFlexGridSizer(4,10,30);
   szr->Add(lables[(int)z_lbl::Mitabeiter],szrflags);
   szr->Add( cbo_benutzer,szrflags );
+  szr->AddSpacer(0);
+  szr->AddSpacer(0);
+
   szr->Add(lables[(int)z_lbl::Startdatum],szrflags);
   szr->Add( start_date,szrflags );
   szr->Add(lables[(int)z_lbl::Enddatum],szrflags);
@@ -84,9 +90,9 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
     return;
   }
   wxDateTime start = {
-          start_date->GetDate().GetDay(), 
-        start_date->GetDate().GetMonth(),
-         start_date->GetDate().GetYear(),
+          start_date->GetValue().GetDay(),
+        start_date->GetValue().GetMonth(),
+         start_date->GetValue().GetYear(),
          start_time->GetValue().GetHour(),
        start_time->GetValue().GetMinute(),
        start_time->GetValue().GetSecond(),
@@ -94,9 +100,9 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
   };
 
   wxDateTime end = {
-          show_end_date? end_date->GetDate().GetDay() : start_date->GetDate().GetDay() ,
-        show_end_date? end_date->GetDate().GetMonth() : start_date->GetDate().GetMonth(),
-         show_end_date? end_date->GetDate().GetYear() : start_date->GetDate().GetYear(),
+          show_end_date? end_date->GetValue().GetDay() : start_date->GetValue().GetDay() ,
+        show_end_date? end_date->GetValue().GetMonth() : start_date->GetValue().GetMonth(),
+         show_end_date? end_date->GetValue().GetYear() : start_date->GetValue().GetYear(),
          end_time->GetValue().GetHour(),
        end_time->GetValue().GetMinute(),
        end_time->GetValue().GetSecond(),          
@@ -162,7 +168,7 @@ void Zeiterfassung::on_toggle(wxCommandEvent& event){
 
 void Zeiterfassung::toggle(){
    
-  end_date->SetDate(start_date->GetDate());
+  end_date->SetValue(start_date->GetValue());
   show_end_date = !show_end_date;
   end_date->Show(show_end_date);
   lables[(int)z_lbl::Enddatum]->Show(show_end_date);

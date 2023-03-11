@@ -1,4 +1,5 @@
 #include "Mitarbeiterverwaltung.hpp"
+#include "wx/datectrl.h"
 
 
 
@@ -11,7 +12,11 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
   cbo_benutzer->AutoComplete(cbo_benutzer->GetStrings());
   cbo_benutzer->SetValue(default_str);
 
-
+  //Setzt das Datumsformat von wxDatePickerCtrl
+  wxLocale l{wxLANGUAGE_GERMAN_GERMANY,wxLOCALE_DONT_LOAD_DEFAULT};
+  date = new wxDatePickerCtrl(this, wxID_ANY);
+  
+ 
   
   //Anordnung aller sichtbaren Elemente/////////////////////////////////////////////////////////////////////////////////
   wxSizerFlags szrflags(1);
@@ -24,6 +29,7 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
   wxFlexGridSizer * szr = new wxFlexGridSizer(6,10,10);
   //szr->Add(lables[(int)z_lbl::Mitabeiter],szrflags);
   szr->Add( cbo_benutzer,szrflags );
+  szr->Add( date,szrflags );
   
   
 
@@ -48,6 +54,7 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
 
 Verwaltung::~Verwaltung(){
   delete cbo_benutzer;
+  delete date;
   
   //for(wxStaticText* st : lables)delete st;
 }

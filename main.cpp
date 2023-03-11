@@ -1,5 +1,6 @@
 #include "MainFrame.hpp"
 
+
 class App: public wxApp{
     public:
         virtual bool OnInit();
@@ -38,6 +39,7 @@ wxEND_EVENT_TABLE()
 wxIMPLEMENT_APP(App);
 
 bool App::OnInit(){
+
 
     //Eine Verbindung für alles
     cppDatabase* DB = new cppDatabase();

@@ -4,7 +4,7 @@
 #include <wx/sizer.h>
 #include <wx/frame.h>
 #include <wx/textctrl.h>
-#include <wx/calctrl.h>
+#include <wx/datectrl.h>
 #include <wx/stattext.h>
 #include <wx/msgdlg.h>
 #include "../Tools/SubWindow.hpp"
@@ -31,8 +31,8 @@ class Mitarbeiteranlage : public SubWindow{
   private:
     wxStaticText* lables[(int)m_lbl::Anzahl_lbl];
     wxTextCtrl* text_ctrls[(int)m_tc::Anzahl_tc];
-    wxGtkCalendarCtrl* start_date;
-    wxGtkCalendarCtrl* birth_date;
+    wxDatePickerCtrl* start_date;
+    wxDatePickerCtrl* birth_date;
     wxComboBox* cbo_tarife;
     wxButton* btn_save;
    

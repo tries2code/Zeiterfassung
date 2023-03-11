@@ -7,6 +7,9 @@
 
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title)
 :SubWindow(parent, DB, this_title){
+
+    //Setzt das Datumsformat von wxDatePickerCtrl
+    wxLocale l{wxLANGUAGE_GERMAN_GERMANY,wxLOCALE_DONT_LOAD_DEFAULT};
     
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
     lables[(int)m_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
@@ -34,8 +37,8 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
     for(wxTextCtrl* t : text_ctrls)t->SetInitialSize({150,30});
 
 
-    start_date = new wxGtkCalendarCtrl(this,wxID_ANY,wxDefaultDateTime);
-    birth_date = new wxGtkCalendarCtrl(this,wxID_ANY,wxDefaultDateTime);
+    start_date = new wxDatePickerCtrl(this,wxID_ANY,wxDefaultDateTime);
+    birth_date = new wxDatePickerCtrl(this,wxID_ANY,wxDefaultDateTime);
     
     cbo_tarife = new wxComboBox(this, wxID_ANY);
     db->fill_combobox(cbo_tarife, "SELECT * FROM V_TG_Bezeichnungen");
@@ -125,15 +128,15 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
 
   //Datum formatieren
   wxDateTime vertragsstart = {
-          start_date->GetDate().GetDay(), 
-        start_date->GetDate().GetMonth(),
-         start_date->GetDate().GetYear(),
+          start_date->GetValue().GetDay(), 
+        start_date->GetValue().GetMonth(),
+         start_date->GetValue().GetYear(),
          0,0,0,0
   };
   wxDateTime geburtstag = {
-          birth_date->GetDate().GetDay(), 
-        birth_date->GetDate().GetMonth(),
-         birth_date->GetDate().GetYear(),
+          birth_date->GetValue().GetDay(), 
+        birth_date->GetValue().GetMonth(),
+         birth_date->GetValue().GetYear(),
          0,0,0,0
   };
   wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessagebox
@@ -242,7 +245,7 @@ bool Mitarbeiteranlage::check_entries(){
     }
 
     //Prüfung auf negative Altersangabe(Wichtig, da sonst bei zu großem Negativ-Wert die nächste Prüfung versagt)
-    if(wxDateTime::Now().GetTicks() < birth_date->GetDate().GetTicks()){
+    if(wxDateTime::Now().GetTicks() < birth_date->GetValue().GetTicks()){
       wxMessageBox( 
         "Altersangabe unplausibel!",
         wxString::FromUTF8("Speichern nicht möglich!"),
@@ -265,7 +268,7 @@ bool Mitarbeiteranlage::check_entries(){
 
     //Prüfung Mindestalter
     int min_age = atoi(db->get_string_from_db("call SP_GET_Konfiguration('min_entry_age')").c_str());
-    int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetDate().GetTicks()) / (60*60*24*365.25);
+    int this_age = (wxDateTime::Now().GetTicks() - birth_date->GetValue().GetTicks()) / (60*60*24*365.25);
     if(this_age < min_age){
       wxMessageBox( 
         wxString::FromUTF8("Das Mindesteintrittsalter beträgt ") + std::to_string(min_age) + " Jahre.\n"
@@ -320,7 +323,7 @@ bool Mitarbeiteranlage::check_entries(){
     }
     //SV-Geburtstag
     wxString str_sv_birthday = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(3,8);
-    wxString str_birthday = birth_date->GetDate().Format(wxT("%d%m%y"));
+    wxString str_birthday = birth_date->GetValue().Format(wxT("%d%m%y"));
     if(str_sv_birthday != str_birthday){
       wxMessageBox( 
       wxString::FromUTF8("Die SV-Nummer enthält ein abweichendes Geburtsdatum."),

@@ -1,7 +1,7 @@
 #pragma once
 #include <wx/button.h>
 #include <wx/timectrl.h>
-#include <wx/calctrl.h>
+#include <wx/datectrl.h>
 #include <wx/msgdlg.h>
 #include <wx/combobox.h>
 #include <wx/frame.h>
@@ -27,10 +27,10 @@ class Zeiterfassung : public SubWindow{
 
         wxComboBox* cbo_benutzer;
 
-        wxGtkCalendarCtrl* start_date;
+        wxDatePickerCtrl* start_date;
         wxTimePickerCtrl* start_time;
 
-        wxGtkCalendarCtrl* end_date;
+        wxDatePickerCtrl* end_date;
         bool show_end_date = false;
         wxTimePickerCtrl* end_time;
 

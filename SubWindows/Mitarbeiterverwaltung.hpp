@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/frame.h>
+#include <wx/datectrl.h>
 
 #include "../Tools/SubWindow.hpp"
 
@@ -13,6 +14,8 @@ class Verwaltung : public SubWindow{
     private:
 
         wxComboBox* cbo_benutzer;
+
+        wxDatePickerCtrl* date;
 
         wxDECLARE_EVENT_TABLE();
 };
