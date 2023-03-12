@@ -1,5 +1,4 @@
 #include "Mitarbeiterverwaltung.hpp"
-#include "wx/stringimpl.h"
 
 
 
@@ -121,6 +120,112 @@ void Verwaltung::on_change_usr(wxCommandEvent& event){
     std::cerr<<"FEHLER in Verwaltung::on_change_ma: " << e.what();
   }
 }
+
+
+
+
+
+
+
+
+void Verwaltung::on_save(wxCommandEvent& event){
+  try{
+    //Eingaben prüfen
+    if(!check_entries())return;
+
+    //Angaben vom Nutzer prüfen lassen
+    int choice = wxMessageBox( 
+    wxString::FromUTF8("Möchten Sie die Änderungen Übernehmen?"),
+    wxString::FromUTF8("Speichern?"),
+    wxYES_NO|wxICON_ERROR
+    );
+
+    //Mitarbeiter anlegen
+    if(choice == 2){
+      
+      wxString strSQL =  "call SP_UPDATE_MA('"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::Ort]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)v_tc::Land]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(cbo_tarife->GetValue().mb_str(wxConvUTF8))
+      +"')";
+
+      bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
+      if(fail){
+        wxMessageBox( 
+          wxString::FromUTF8("Bitte wenden Sie sich an die Administration!"),
+          wxString::FromUTF8("Fehler beim Speichervorgang!"),
+          wxOK|wxICON_ERROR
+        );
+        return;
+      }
+
+      wxMessageBox( 
+        "Die Daten von " + wxString::FromUTF8(text_ctrls[(int)v_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
+        wxString::FromUTF8(text_ctrls[(int)v_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " wurden berarbeitet.",
+        wxString::FromUTF8("Änderung erfolgreich."),
+        wxOK|wxICON_INFORMATION
+      );
+    }
+  }
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Verwaltung::on_save: "<< e.what();
+  }
+}
+
+bool Verwaltung::check_entries(){
+  try{
+    //Prüfung ob alle Felder ausgefüllt sind
+    for(int i = 0; i < (int)v_tc::Anzahl_tc; ++i){
+      if(wxString::FromUTF8(text_ctrls[i]->GetValue().mb_str(wxConvUTF8)).length() == 0){
+        wxMessageBox( 
+        wxString::FromUTF8("Daten können nicht gespeichert werden!\nDas Feld [") 
+        + wxString::FromUTF8(lables[i]->GetLabelText().mb_str(wxConvUTF8)).Trim(false)
+        + wxString::FromUTF8("] enthält keinen Wert. "),
+        wxString::FromUTF8("Angaben unvollständig!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+      }
+    }
+
+    //Prüfung ob Tarif ausgewählt wurde
+    if(cbo_tarife->GetValue() == default_str){
+        wxMessageBox( 
+        wxString::FromUTF8("Daten können nicht gespeichert werden!\nEs wurde kein [Tarif] ausgewählt."),
+        wxString::FromUTF8("Angaben unvollständig!"),
+        wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+
+    //Prüfung PLZ
+    bool five_digits= std::regex_match(text_ctrls[(int)v_tc::PLZ]->GetValue().ToStdString()
+                                      ,std::regex("^\\d{5}$"));
+    if(!five_digits){
+      wxMessageBox( 
+      wxString::FromUTF8("Bitte überprüfen Sie die Postleitzahl."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
+
+    return true;
+  }
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Verwaltung::check_entries: " << e.what();
+    return false;
+  }
+}
+
+
+
 
 
 Verwaltung::~Verwaltung(){

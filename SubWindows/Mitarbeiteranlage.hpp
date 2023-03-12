@@ -1,3 +1,4 @@
+#pragma once
 #include <regex>
 
 #include <wx/button.h>
@@ -19,7 +20,7 @@ enum class m_tc{
 };
 
 enum{
-   ID_Save_MA, ID_SvNr
+   ID_Save_btn, ID_SvNr
 };
 
 

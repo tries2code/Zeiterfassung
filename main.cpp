@@ -29,12 +29,13 @@ wxBEGIN_EVENT_TABLE(Uebersicht, SubWindow)
 wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Mitarbeiteranlage, SubWindow)
-    EVT_BUTTON(ID_Save_MA, Mitarbeiteranlage::on_save)
+    EVT_BUTTON(ID_Save_btn, Mitarbeiteranlage::on_save)
     EVT_TEXT(ID_SvNr, Mitarbeiteranlage::style_svnr_syntax)
 wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Verwaltung, SubWindow)
- EVT_TEXT(ID_USR_cbo, Verwaltung::on_change_usr)
+    EVT_TEXT(ID_USR_cbo, Verwaltung::on_change_usr)
+    EVT_BUTTON(ID_Update_btn, Verwaltung::on_save)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);

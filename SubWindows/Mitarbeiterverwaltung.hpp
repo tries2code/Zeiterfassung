@@ -1,5 +1,5 @@
 #pragma once
-
+#include <regex>
 #include <wx/frame.h>
 #include <wx/button.h>
 #include <wx/msgdlg.h>
@@ -37,6 +37,9 @@ class Verwaltung : public SubWindow{
         wxComboBox* cbo_tarife;
 
         wxButton* btn_update;
+
+        void on_save(wxCommandEvent& event);
+        bool check_entries();
 
         wxDECLARE_EVENT_TABLE();
 };

@@ -14,7 +14,7 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
     
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
     lables[(int)m_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
-    lables[(int)m_lbl::Name] = new wxStaticText(this,wxID_ANY,"               Name");
+    lables[(int)m_lbl::Name] = new wxStaticText(this,wxID_ANY,"              Name*");
     lables[(int)m_lbl::Benutzername] = new wxStaticText(this,wxID_ANY,"Benutzername");
     lables[(int)m_lbl::Strasse] = new wxStaticText(this,wxID_ANY,"        Strasse");
     lables[(int)m_lbl::Hausnummer] = new wxStaticText(this,wxID_ANY,"Hausnummer");
@@ -46,7 +46,11 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
     cbo_tarife->SetValue(default_str);
     cbo_tarife->SetEditable(false);
 
-    btn_save = new wxButton(this,ID_Save_MA,"Mitarbeiter neu anlegen");
+    btn_save = new wxButton(this,ID_Save_btn,"Mitarbeiter neu anlegen");
+
+//Tooltips//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    lables[(int)m_lbl::Name]->SetToolTip("Beginnend wie im Sozialversicherungs­ausweis vermerkt!");
+    text_ctrls[(int)m_tc::Name]->SetToolTip("Beginnend wie im Sozialversicherungs­ausweis vermerkt!");
 
 
 //Anordnung aller sichtbaren Elemente/////////////////////////////////////////////////////////////////////////////////
