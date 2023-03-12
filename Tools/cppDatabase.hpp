@@ -32,6 +32,7 @@ class cppDatabase{
         cppDatabase();
         
         std::string get_string_from_db(const char* strSQL);
+        MYSQL_ROW get_row_from_db(const char* strSQL);
         bool execute_SQL(const char* strSQL);
         bool fill_combobox(wxComboBox* cbo,const char* strSQL);
         bool fill_grid(wxGrid* grd, const char* strSQL);

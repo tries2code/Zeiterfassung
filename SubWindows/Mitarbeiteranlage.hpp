@@ -35,8 +35,6 @@ class Mitarbeiteranlage : public SubWindow{
     wxDatePickerCtrl* birth_date;
     wxComboBox* cbo_tarife;
     wxButton* btn_save;
-   
-     
 
     void on_save(wxCommandEvent& event);
     bool check_entries();

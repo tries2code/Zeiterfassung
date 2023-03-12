@@ -113,8 +113,8 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
     str_Sum = str_Sum.substr(0,str_Sum.length()-4);
     lables[(int)u_lbl::Stunden]->SetLabel("Insgesamt: " + str_Sum + " Stunden");
   }
-  catch(...){
-    std::cerr<<"FEHLER in Uebersicht::on_show_times!\n";
+ catch(std::exception& e){
+    std::cerr<<"FEHLER in Uebersicht::on_show_times: " << e.what();
   }
 }
 
@@ -150,8 +150,8 @@ void Uebersicht::on_change_usr(wxCommandEvent& event){
     combo_boxen[(int)u_cbo::Jahr]->SetValue(combo_boxen[(int)u_cbo::Jahr]->GetString(0));
     combo_boxen[(int)u_cbo::Jahr]->SetToolTip("");
   }
-  catch(...){
-    std::cerr<<"FEHLER in Uebersicht::on_change_ma!\n";
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Uebersicht::on_change_ma: " << e.what();
   }
 }
 
@@ -184,8 +184,8 @@ bool Uebersicht::set_up_grid(){
     grd_zeiten->DisableDragRowSize();
     return true;
   }
-  catch(...){
-    std::cerr<<"FEHLER in Uebersicht::set_up_grid!\n";
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Uebersicht::set_up_grid: " << e.what();
     return false;
   }
 }
@@ -215,8 +215,8 @@ bool Uebersicht::set_up_combos(){
     
     return true;
   }
-  catch(...){
-    std::cerr<<"FEHLER in Uebersicht::set_up_combo!\n";
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Uebersicht::set_up_combo: " << e.what();
     return false;
   }
 }

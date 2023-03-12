@@ -2,6 +2,7 @@
 #include "wx/datetime.h"
 #include "wx/gtk/cursor.h"
 #include "wx/textctrl.h"
+#include <exception>
 #include <string>
 
 
@@ -122,74 +123,78 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
 }
 
 void Mitarbeiteranlage::on_save(wxCommandEvent& event){
-  
-  //Eingaben prüfen
-  if(!check_entries())return;
+  try{
+    //Eingaben prüfen
+    if(!check_entries())return;
 
-  //Datum formatieren
-  wxDateTime vertragsstart = {
-          start_date->GetValue().GetDay(), 
-        start_date->GetValue().GetMonth(),
-         start_date->GetValue().GetYear(),
-         0,0,0,0
-  };
-  wxDateTime geburtstag = {
-          birth_date->GetValue().GetDay(), 
-        birth_date->GetValue().GetMonth(),
-         birth_date->GetValue().GetYear(),
-         0,0,0,0
-  };
-  wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessagebox
-  wxString strGeburtstag = geburtstag.Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessagebox
+    //Datum formatieren
+    wxDateTime vertragsstart = {
+            start_date->GetValue().GetDay(), 
+          start_date->GetValue().GetMonth(),
+           start_date->GetValue().GetYear(),
+           0,0,0,0
+    };
+    wxDateTime geburtstag = {
+            birth_date->GetValue().GetDay(), 
+          birth_date->GetValue().GetMonth(),
+           birth_date->GetValue().GetYear(),
+           0,0,0,0
+    };
+    wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessagebox
+    wxString strGeburtstag = geburtstag.Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessagebox
 
-  //Angaben vom Nutzer prüfen lassen
-  int choice = wxMessageBox( 
-  "Voller Name:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
-  +"\n\nBenutzername:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))
-  +"\n\nAdresse:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))
-  +"\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))
-  +"\n\nSozielversicherungsnummer:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))
-  +"\n\nAnstellungsdatum:\n"+strVertragsstart
-  +"\n\nGeburtstag:\n"+strGeburtstag,
-  wxString::FromUTF8("Bitte prüfen Sie die Angaben!"),
-  wxYES_NO|wxICON_ERROR
-  );
-
-  //Mitarbeiter anlegen
-  if(choice == 2){
-    strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));  //Formatierung für DB-Eintrag
-    strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));        //Formatierung für DB-Eintrag
-    wxString strSQL =  "call SP_INSERT_MA('"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::Land]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))+"','"
-    +wxString::FromUTF8(cbo_tarife->GetValue().mb_str(wxConvUTF8))+"','"
-    +strVertragsstart.ToStdString()+"','"
-    +strGeburtstag.ToStdString()
-    +"')";
-
-    bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
-    if(fail){
-      wxMessageBox( 
-        wxString::FromUTF8("Bitten wenden Sie sich an die Administration!"),
-        wxString::FromUTF8("Fehler beim Speichervorgang!"),
-        wxOK|wxICON_ERROR
-      );
-      return;
-    }
-    
-    wxMessageBox( 
-      wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
-      wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " wurde angelegt.",
-      wxString::FromUTF8("Speichervorgang erfolgreich."),
-      wxOK|wxICON_INFORMATION
+    //Angaben vom Nutzer prüfen lassen
+    int choice = wxMessageBox( 
+    "Voller Name:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) 
+    +"\n\nBenutzername:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))
+    +"\n\nAdresse:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))
+    +"\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+ " "+wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))
+    +"\n\nSozielversicherungsnummer:\n"+wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))
+    +"\n\nAnstellungsdatum:\n"+strVertragsstart
+    +"\n\nGeburtstag:\n"+strGeburtstag,
+    wxString::FromUTF8("Bitte prüfen Sie die Angaben!"),
+    wxYES_NO|wxICON_ERROR
     );
+
+    //Mitarbeiter anlegen
+    if(choice == 2){
+      strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));  //Formatierung für DB-Eintrag
+      strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));        //Formatierung für DB-Eintrag
+      wxString strSQL =  "call SP_INSERT_MA('"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Benutzername]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Strasse]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Hausnummer]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::PLZ]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Ort]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::Land]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8))+"','"
+      +wxString::FromUTF8(cbo_tarife->GetValue().mb_str(wxConvUTF8))+"','"
+      +strVertragsstart.ToStdString()+"','"
+      +strGeburtstag.ToStdString()
+      +"')";
+
+      bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
+      if(fail){
+        wxMessageBox( 
+          wxString::FromUTF8("Bitte wenden Sie sich an die Administration!"),
+          wxString::FromUTF8("Fehler beim Speichervorgang!"),
+          wxOK|wxICON_ERROR
+        );
+        return;
+      }
+
+      wxMessageBox( 
+        wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8)) + " "+
+        wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8)) + " wurde angelegt.",
+        wxString::FromUTF8("Speichervorgang erfolgreich."),
+        wxOK|wxICON_INFORMATION
+      );
+    }
+  }
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Mitarbeiteranlage::on_save: "<< e.what();
   }
 }
 
@@ -291,9 +296,20 @@ bool Mitarbeiteranlage::check_entries(){
       );
       return false;
     }
+    //SV auf Umlaute prüfen
+    wxString str_sv = wxString::FromUTF8(text_ctrls[(int)m_tc::SVNummer]->GetValue().mb_str(wxConvUTF8));
+    std::regex umlaut_regex("[äöüß]");
+    bool hat_umlaute = std::regex_search(str_sv.utf8_string(), umlaut_regex);
+    if(hat_umlaute){
+      wxMessageBox( 
+      wxString::FromUTF8("SV-Nummern enthalten keine Umlaute."),
+      wxString::FromUTF8("Speichern nicht möglich!"),
+      wxOK|wxICON_ERROR
+      );
+      return false;
+    }
     //SV Format
-    std::string str_sv = text_ctrls[(int)m_tc::SVNummer]->GetValue().ToStdString();
-    bool sv_format = std::regex_match(str_sv,std::regex("^\\d{2}-\\d{6}-[a-zA-Z]-\\d{3}$"));
+    bool sv_format = std::regex_match(str_sv.ToStdString(),std::regex("^\\d{2}-\\d{6}-[a-zA-Z]-\\d{3}$"));
     if(!sv_format){
       //Wert muss komplett neu eingegeben werden, wenn die Bindestriche an den vorgegebenen Stellen nicht vorhanden sind
       bool keep_str = (str_sv[2] == '-' && str_sv[9] == '-' && str_sv[11] == '-');
@@ -332,12 +348,15 @@ bool Mitarbeiteranlage::check_entries(){
       );
       return false;
     }
-    //SV-Erster Buchstabe des Nachnamens
+    //SV-Erster Buchstabe des Nachnamens, Umlaute werden aufgelösst
     std::string str_sv_1st_c_name = text_ctrls[(int)m_tc::SVNummer]->GetValue().SubString(10,10).ToStdString();
-    std::string str_1st_c_name = text_ctrls[(int)m_tc::Name]->GetValue().ToStdString();
+    wxString str_1st_c_name = wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))[0];
+    if(str_1st_c_name.utf8_string() == "ä" || str_1st_c_name.utf8_string() == "Ä")str_1st_c_name = "a";
+    if(str_1st_c_name.utf8_string() == "ö" || str_1st_c_name.utf8_string() == "Ö")str_1st_c_name = "o";
+    if(str_1st_c_name.utf8_string() == "ü" || str_1st_c_name.utf8_string() == "Ü")str_1st_c_name = "u";
     if(std::tolower(str_sv_1st_c_name[0]) != std::tolower(str_1st_c_name[0])){
       wxMessageBox( 
-      wxString::FromUTF8("Der Buchstabe der SV-Nummer stimmt nicht mit dem Anfangbuchstaben des Names überein."),
+      wxString::FromUTF8("Der Buchstabe der SV-Nummer passt nicht zum Anfangbuchstaben des Names."),
       wxString::FromUTF8("Speichern nicht möglich!"),
       wxOK|wxICON_ERROR
       );
@@ -357,8 +376,8 @@ bool Mitarbeiteranlage::check_entries(){
 
     return true;
   }
-  catch(...){
-    std::cerr<<"FEHLER in Mitarbeiteranlage::check_entries!\n";
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Mitarbeiteranlage::check_entries: " << e.what();
     return false;
   }
 }
@@ -382,8 +401,8 @@ void Mitarbeiteranlage::style_svnr_syntax(wxCommandEvent& event){
       }
     }
   }
-  catch(...){
-    std::cerr<<"FEHLER in Mitarbeiteranlage::check_svnr_syntax!\n";
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Mitarbeiteranlage::check_svnr_syntax: " << e.what();
   }
 }
 

@@ -47,8 +47,8 @@ bool cppDatabase::Init(){
         
         return true;
     }
-    catch(...){
-        std::cerr<<"FEHLER in cppDatabase::Init()!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in cppDatabase::Init: " << e.what();
         return false;
     }
 }
@@ -73,11 +73,38 @@ std::string cppDatabase::get_string_from_db(const char* strSQL){
 
         return output;
     }
-    catch(...){
-        std::cerr<<"FEHLER in cppDatabase::get_string_from_db!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in cppDatabase::get_string_from_db: " << e.what();
         return "error";
     }
 };
+
+
+MYSQL_ROW cppDatabase::get_row_from_db(const char* strSQL){
+    try{
+
+        Init();
+
+        mysql_query(conn_db, strSQL);
+        result_set = mysql_store_result(conn_db); 
+
+        MYSQL_ROW output;
+
+	    while((row = mysql_fetch_row(result_set)) !=0){
+            output = row;
+	    }
+        mysql_free_result(result_set);
+        mysql_close(conn_db);
+
+        return output;
+    }
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in cppDatabase::get_row_from_db: " << e.what();
+        return MYSQL_ROW();
+    }
+};
+
+
 
 bool cppDatabase::execute_SQL(const char* strSQL){
     //Auf Substrings prüfen("delete", "drop","insert", usw)   
@@ -90,8 +117,8 @@ bool cppDatabase::execute_SQL(const char* strSQL){
         mysql_close(conn_db);
         return fehler_bei_ausfuehrung;
     }
-    catch(...){
-        std::cerr<<"FEHLER in cppDatabase::executeSQL!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in cppDatabase::executeSQL: " << e.what();
         return false;
     }
 };
@@ -116,8 +143,8 @@ bool cppDatabase::fill_combobox(wxComboBox* cbo,const char* strSQL){
         mysql_close(conn_db);
         return true;
     }
-    catch(...){
-        std::cerr<<"FEHLER in cppDatabase::fill_combobox!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in cppDatabase::fill_combobox: " << e.what();
         return false;
     }
 };
@@ -155,8 +182,8 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
         mysql_close(conn_db);
         return true;
     }
-    catch(...){
-        std::cerr<<"FEHLER in cppDatabase::fill_grid!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in cppDatabase::fill_grid: " << e.what();
         return false;
     }
 };

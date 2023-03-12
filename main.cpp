@@ -34,6 +34,7 @@ wxBEGIN_EVENT_TABLE(Mitarbeiteranlage, SubWindow)
 wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Verwaltung, SubWindow)
+ EVT_TEXT(ID_USR_cbo, Verwaltung::on_change_usr)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);

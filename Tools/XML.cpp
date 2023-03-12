@@ -17,8 +17,8 @@ bool XML::get_file_text(const std::string& filename){
         input_stream.close();
         return true;
     }
-    catch(...){
-        std::cerr<<"FEHLER in XML::get_file_text(const std::string& filename)!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in XML::get_file_text: " << e.what();
         return false;
     }
 }
@@ -35,8 +35,8 @@ char* XML::get_XML_field(const std::string& field){
         strcpy(result, file_text.substr(start, pos - start).c_str());
         return result;
     }
-    catch(...){
-        std::cerr<<"FEHLER in XML::get_XML_field(const std::string& field)!\n";
+    catch(std::exception& e){
+        std::cerr<<"FEHLER in XML::get_XML_field: " << e.what();
         return (char*)"-1";
     }
 }
