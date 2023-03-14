@@ -17,6 +17,20 @@
                 "wxUSE_DATEPICKCTRL":"1",
             },
                 
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release",
+            "program": "${workspaceFolder}/main",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "release_Zeiterfassung",
+            "env": {
+                "LD_LIBRARY_PATH":"/usr/local/lib/",
+                "wxUSE_DATEPICKCTRL":"1",
+            },
+                
         }
     ]
 }

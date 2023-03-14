@@ -35,3 +35,9 @@ Mitarbeiteranlage:
   -Prüft ob der Benutzername bereits in der Datenbank vorhanden ist, und fordert gegebenenfalls eine Alternative
   -Prüft Altersangabe auf Plausibilität
   -Prüft Altersangabe auf Mindesteintrittsalter(konfigurierbar)
+  -Prüft SV-Nummer(Format, Peronenbeogene Daten)
+
+Mitarbeiterverwaltung:
+    -Anpassung Hinterlegter Mitarbeiter-Daten
+    -Passwort kann zurückgestzt werden(Initiales Passwort->Konfigurierbar)
+    -Mitarbeiter auslagern -> Daten werden archiviert

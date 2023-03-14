@@ -18,7 +18,7 @@ enum class v_tc{
 };
 
 enum{
-   ID_Update_btn, ID_cbo
+   ID_Update_btn,ID_ResetPW_btn, ID_Unload_btn, ID_cbo
 };
 
 
@@ -36,9 +36,13 @@ class Verwaltung : public SubWindow{
        
         wxComboBox* cbo_tarife;
 
-        wxButton* btn_update;
+        wxButton *btn_update;
+        wxButton *btn_reset_pwd;
+        wxButton *btn_unload_empl;
 
-        void on_save(wxCommandEvent& event);
+        void on_update(wxCommandEvent& event);
+        void on_reset_pw(wxCommandEvent& event);
+        void on_unload(wxCommandEvent& event);
         bool check_entries();
 
         wxDECLARE_EVENT_TABLE();

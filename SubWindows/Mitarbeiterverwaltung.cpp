@@ -35,7 +35,11 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
   cbo_tarife->SetValue(default_str);  ////////
   cbo_tarife->SetEditable(false);
 
-  btn_update = new wxButton(this,ID_Update_btn,"Speichern");
+  btn_update = new wxButton(this,ID_Update_btn,"Aktualisieren");
+  btn_reset_pwd = new wxButton(this,ID_ResetPW_btn,"Passwort Reset");
+  btn_unload_empl = new wxButton(this,ID_Unload_btn,"Auslagern");
+  
+
   
   
   //Anordnung aller sichtbaren Elemente/////////////////////////////////////////////////////////////////////////////////
@@ -83,6 +87,8 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
 
   wxBoxSizer * szrButtons = new wxBoxSizer(wxVERTICAL);
     szrButtons->Add( btn_update,szrflags);
+    szrButtons->Add( btn_reset_pwd,szrflags);
+    szrButtons->Add( btn_unload_empl,szrflags);
     
 
   wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL);
@@ -122,13 +128,7 @@ void Verwaltung::on_change_usr(wxCommandEvent& event){
 }
 
 
-
-
-
-
-
-
-void Verwaltung::on_save(wxCommandEvent& event){
+void Verwaltung::on_update(wxCommandEvent& event){
   try{
     //Eingaben prüfen
     if(!check_entries())return;
@@ -178,6 +178,90 @@ void Verwaltung::on_save(wxCommandEvent& event){
   }
 }
 
+
+void Verwaltung::on_reset_pw(wxCommandEvent& event){
+  try{
+    //Passwort vom Nutzer zurücksetzen
+    wxString strSQL = "call SP_GET_MA_Namen('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"')";
+    std::string str_name_empl = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+    int choice = wxMessageBox( 
+    wxString::FromUTF8("Möchten Sie das Passwort von ") + wxString::FromUTF8(str_name_empl) +wxString::FromUTF8(" wirklich zurücksetzen?"),
+    wxString::FromUTF8("Sind sie sicher?"),
+    wxYES_NO|wxICON_ERROR
+    );
+
+    //Mitarbeiter auslagern
+    if(choice == 2){
+      wxString strSQL =  "call SP_RESET_PW('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"')";
+      bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
+      if(fail){
+        wxMessageBox( 
+          wxString::FromUTF8("Bitte wenden Sie sich an die Administration!"),
+          wxString::FromUTF8("Fehler beim Auslagern!"),
+          wxOK|wxICON_ERROR
+        );
+        return;
+      }
+
+      wxMessageBox( 
+        "Das Passwort von " + wxString::FromUTF8(str_name_empl) + wxString::FromUTF8(" wurde erfolgreich zurückgesetzt."),
+        wxString::FromUTF8("Passwort zurücksetzen erfolgreich."),
+        wxOK|wxICON_INFORMATION
+      );
+    }
+    
+  }
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Verwaltung::on_reset_pw: "<< e.what();
+  }
+}
+
+
+void Verwaltung::on_unload(wxCommandEvent& event){
+  try{
+    //Löschen vom Nutzer prüfen lassen
+    wxString strSQL = "call SP_GET_MA_Namen('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"')";
+    std::string str_name_empl = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+    int choice = wxMessageBox( 
+    wxString::FromUTF8("Möchten Sie ") + wxString::FromUTF8(str_name_empl) +" wirklich auslagern?",
+    wxString::FromUTF8("Sind sie sicher?"),
+    wxYES_NO|wxICON_ERROR
+    );
+
+    //Mitarbeiter auslagern
+    if(choice == 2){
+      wxString strSQL =  "call SP_REMOVE_MA('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"')";
+      bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));    //Hier sollte kein Fehler passieren
+      if(fail){
+        wxMessageBox( 
+          wxString::FromUTF8("Bitte wenden Sie sich an die Administration!"),
+          wxString::FromUTF8("Fehler beim Auslagern!"),
+          wxOK|wxICON_ERROR
+        );
+        return;
+      }
+
+      wxMessageBox( 
+        wxString::FromUTF8(str_name_empl) + " wurde ausgelagert.",
+        wxString::FromUTF8("Aulagern erfolgreich."),
+        wxOK|wxICON_INFORMATION
+      );
+
+      //Aufräumen
+      db->fill_combobox(cbo_benutzer, "SELECT * FROM V_MA_Benutzernamen");
+      cbo_benutzer->AutoComplete(cbo_benutzer->GetStrings());
+      cbo_benutzer->SetValue(default_str);
+      for( wxTextCtrl *k :text_ctrls)k->Clear();
+      cbo_tarife->SetValue(default_str);
+    }
+    
+  }
+  catch(std::exception& e){
+    std::cerr<<"FEHLER in Verwaltung::on_unload: "<< e.what();
+  }
+}
+
+
 bool Verwaltung::check_entries(){
   try{
     //Prüfung ob alle Felder ausgefüllt sind
@@ -225,14 +309,12 @@ bool Verwaltung::check_entries(){
 }
 
 
-
-
-
 Verwaltung::~Verwaltung(){
-  
   delete cbo_benutzer;
   for(wxStaticText* st : lables)delete st;
   for(wxTextCtrl* tc : text_ctrls)delete tc;
   delete cbo_tarife;
   delete btn_update;
+  delete btn_reset_pwd;
+  delete btn_unload_empl;
 }

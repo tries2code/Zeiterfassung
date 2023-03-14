@@ -1,5 +1,14 @@
 #include "MainFrame.hpp"
+#include "SubWindows/Mitarbeiterverwaltung.hpp"
+#include <iostream>
+#include <string>
 
+
+#ifdef _DEBUG
+    #define dbg_mode true
+#else
+    #define dbg_mode false
+#endif
 
 class App: public wxApp{
     public:
@@ -34,18 +43,21 @@ wxBEGIN_EVENT_TABLE(Mitarbeiteranlage, SubWindow)
 wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Verwaltung, SubWindow)
-    EVT_TEXT(ID_USR_cbo, Verwaltung::on_change_usr)
-    EVT_BUTTON(ID_Update_btn, Verwaltung::on_save)
+    EVT_TEXT(ID_cbo, Verwaltung::on_change_usr)
+    EVT_BUTTON(ID_Update_btn, Verwaltung::on_update)
+    EVT_BUTTON(ID_ResetPW_btn, Verwaltung::on_reset_pw)
+    EVT_BUTTON(ID_Unload_btn, Verwaltung::on_unload)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);
 
 bool App::OnInit(){
 
-
     //Eine Verbindung für alles
     cppDatabase* DB = new cppDatabase();
-    MainFrame *frame = new MainFrame("[Programm-Name]", wxPoint(50, 50), wxSize(1100, 600), DB );
+
+    std::string str_mode = (dbg_mode)?"Debug_Mode":"Release_Mode";
+    MainFrame *frame = new MainFrame("[Programm-Name]-"+str_mode, wxPoint(50, 50), wxSize(1100, 600), DB );
 
     frame->Show( true );
     return true;
