@@ -9,16 +9,17 @@
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title)
 :SubWindow(parent, DB, this_title){
 
+
     //Setzt das Datumsformat von wxDatePickerCtrl
     wxLocale l{wxLANGUAGE_GERMAN_GERMANY,wxLOCALE_DONT_LOAD_DEFAULT};
     
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
     lables[(int)m_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
-    lables[(int)m_lbl::Name] = new wxStaticText(this,wxID_ANY,"              Name*");
-    lables[(int)m_lbl::Benutzername] = new wxStaticText(this,wxID_ANY,"Benutzername");
+    lables[(int)m_lbl::Name] = new wxStaticText(this,wxID_ANY,"        Name ℹ️");
+    lables[(int)m_lbl::Benutzername] = new wxStaticText(this,wxID_ANY,"Benutzername ℹ️");
     lables[(int)m_lbl::Strasse] = new wxStaticText(this,wxID_ANY,"        Strasse");
     lables[(int)m_lbl::Hausnummer] = new wxStaticText(this,wxID_ANY,"Hausnummer");
-    lables[(int)m_lbl::PLZ] = new wxStaticText(this,wxID_ANY,"PLZ");
+    lables[(int)m_lbl::PLZ] = new wxStaticText(this,wxID_ANY,"             PLZ");
     lables[(int)m_lbl::Ort] = new wxStaticText(this,wxID_ANY,"Ort");
     lables[(int)m_lbl::Land] = new wxStaticText(this,wxID_ANY,"Land");
     lables[(int)m_lbl::SVNummer] = new wxStaticText(this,wxID_ANY,"SV-Nr");
@@ -51,6 +52,9 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
 //Tooltips//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     lables[(int)m_lbl::Name]->SetToolTip("Beginnend wie im Sozialversicherungs­ausweis vermerkt!");
     text_ctrls[(int)m_tc::Name]->SetToolTip("Beginnend wie im Sozialversicherungs­ausweis vermerkt!");
+
+    lables[(int)m_lbl::Benutzername]->SetToolTip("Kann nicht mehr verändert werden.");
+    text_ctrls[(int)m_tc::Benutzername]->SetToolTip("Kann nicht mehr verändert werden.");
 
 
 //Anordnung aller sichtbaren Elemente/////////////////////////////////////////////////////////////////////////////////

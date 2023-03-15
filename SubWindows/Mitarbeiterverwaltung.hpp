@@ -10,9 +10,9 @@
 
 
 enum class v_lbl{
-    Vorname, Name, Strasse, Hausnummer, PLZ, Ort, Land, Tarif, Anzahl_lbl
+    Vorname, Name, Strasse, Hausnummer, PLZ, Ort, Land, Benutzer, Tarif, Anzahl_lbl
 };
-
+//Beide enums müssen bis 'Land' identisch sein(siehe Prüfung)
 enum class v_tc{
     Vorname, Name, Strasse, Hausnummer, PLZ, Ort, Land, Anzahl_tc
 };

@@ -11,13 +11,14 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
   cbo_benutzer->AutoComplete(cbo_benutzer->GetStrings());
   cbo_benutzer->SetValue(default_str);
 
-  lables[(int)v_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"     Vorname");
-  lables[(int)v_lbl::Name] = new wxStaticText(this,wxID_ANY,"               Name");
-  lables[(int)v_lbl::Strasse] = new wxStaticText(this,wxID_ANY,"        Strasse");
+  lables[(int)v_lbl::Vorname] = new wxStaticText(this,wxID_ANY,"Vorname");
+  lables[(int)v_lbl::Name] = new wxStaticText(this,wxID_ANY,"Name");
+  lables[(int)v_lbl::Strasse] = new wxStaticText(this,wxID_ANY,"Strasse");
   lables[(int)v_lbl::Hausnummer] = new wxStaticText(this,wxID_ANY,"Hausnummer");
   lables[(int)v_lbl::PLZ] = new wxStaticText(this,wxID_ANY,"PLZ");
   lables[(int)v_lbl::Ort] = new wxStaticText(this,wxID_ANY,"Ort");
   lables[(int)v_lbl::Land] = new wxStaticText(this,wxID_ANY,"Land");
+  lables[(int)v_lbl::Benutzer] = new wxStaticText(this,wxID_ANY,"Benutzer");
   lables[(int)v_lbl::Tarif] = new wxStaticText(this,wxID_ANY,"Tarif");
 
   text_ctrls[(int)v_tc::Vorname] = new wxTextCtrl(this,wxID_ANY);
@@ -52,7 +53,7 @@ Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_ti
     title_szr->Add(title);
 
   wxFlexGridSizer * szr = new wxFlexGridSizer(4,10,10);
-    szr->AddSpacer(1);    //label einfügen
+    szr->Add(lables[(int)v_lbl::Benutzer],szrflags);
     szr->Add(cbo_benutzer);
     szr->AddSpacer(1);
     szr->AddSpacer(1);
