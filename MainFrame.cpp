@@ -24,12 +24,16 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     menu_Mitarbeiter->Append(ID_Mitarbeiteranlage,"&Anlegen \tCtrl-M", wxString::FromUTF8("Neue Mitarbeiter anlegen."));
     menu_Mitarbeiter->Append(ID_Verwaltung,"&Verwalten \tCtrl-W", wxString::FromUTF8("Mitarbeiter verwalten."));
 
+    wxMenu *menu_Einstellungen = new wxMenu;
+    menu_Einstellungen->Append(ID_Benutzereinstellungen,"&Benutzer \tCtrl-B", wxString::FromUTF8("Einstellungen für Mitarbeiter."));
+
     wxMenu *menu_Hilfe = new wxMenu;
     menu_Hilfe->Append(wxID_ABOUT,"&Hilfe \tCtrl-H", wxString::FromUTF8("Nützliche Informationen."));
     
     wxMenuBar *menu_Bar = new wxMenuBar;
     menu_Bar->Append( menu_Zeit, "&Zeit");
     menu_Bar->Append( menu_Mitarbeiter, "&Mitarbeiter");
+    menu_Bar->Append( menu_Einstellungen, "&Einstellungen");
     menu_Bar->Append( menu_Hilfe, "&Hilfe");
     menu_Bar->SetBackgroundColour(wxColour(255,136,0,75));
     SetMenuBar(menu_Bar);
@@ -75,6 +79,11 @@ void MainFrame::on_new_employee(wxCommandEvent& event){
 void MainFrame::on_edit_employee(wxCommandEvent& event){
     DestroyChildren();
     Subwindows[(int)sub::Verwaltung] = new Verwaltung(this,db, "Mitarbeiterverwaltung");
+}
+
+void MainFrame::on_edit_employee_settings(wxCommandEvent& event){
+    DestroyChildren();
+    Subwindows[(int)sub::Benutzereinstellungen] = new Benutzereinstellungen(this,db, "Benutzereinstellungen");
 }
 
 ///////////////Hilfsfunktionen///////////////////////

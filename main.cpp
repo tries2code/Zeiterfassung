@@ -23,6 +23,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(ID_Uebersicht, MainFrame::on_show_times)
     EVT_MENU(ID_Mitarbeiteranlage, MainFrame::on_new_employee)
     EVT_MENU(ID_Verwaltung, MainFrame::on_edit_employee)
+    EVT_MENU(ID_Benutzereinstellungen, MainFrame::on_edit_employee_settings)
 wxEND_EVENT_TABLE()
 
 //Event Table muss für jedes Subfenster erstellt werden
@@ -47,6 +48,10 @@ wxBEGIN_EVENT_TABLE(Verwaltung, SubWindow)
     EVT_BUTTON(ID_Update_btn, Verwaltung::on_update)
     EVT_BUTTON(ID_ResetPW_btn, Verwaltung::on_reset_pw)
     EVT_BUTTON(ID_Unload_btn, Verwaltung::on_unload)
+wxEND_EVENT_TABLE()
+
+wxBEGIN_EVENT_TABLE(Benutzereinstellungen, SubWindow)
+    EVT_BUTTON(ID_SaveSetting_btn, Benutzereinstellungen::on_save)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);
