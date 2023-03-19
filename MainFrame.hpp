@@ -37,7 +37,8 @@ class MainFrame: public wxFrame{
     public:
 
         MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size, cppDatabase* DB);
-    
+        ~MainFrame();
+        
     private:
 
         SubWindow* Subwindows[(int)sub::Summe_aller_fenster];

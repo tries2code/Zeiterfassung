@@ -1,6 +1,4 @@
 #include "cppDatabase.hpp"
-#include <exception>
-
 
 cppDatabase::cppDatabase(char* host, char* usr, char* pwd, char* db):host(host),usr(usr),pwd(pwd),db(db){}
 cppDatabase::cppDatabase(){
@@ -11,7 +9,6 @@ cppDatabase::cppDatabase(){
 }
 
 bool cppDatabase::Init(){
-
     try{
         alpha_db = mysql_init(NULL);
         if (!alpha_db) return false;

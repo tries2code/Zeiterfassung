@@ -1,8 +1,5 @@
 #include "Mitarbeiterverwaltung.hpp"
 
-
-
-
 Verwaltung::Verwaltung(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB,this_title){
 
   //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////

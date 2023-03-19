@@ -95,3 +95,7 @@ wxString get_time_point(const time_point& this_ime, const std::string& format){
     ss << std::put_time( &tm, format.c_str() );
     return (wxString)ss.str();
 }
+
+MainFrame::~MainFrame(){
+    LOG::log_msg("PROGRAMM ENDE");
+}

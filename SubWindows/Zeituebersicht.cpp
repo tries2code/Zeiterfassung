@@ -1,6 +1,4 @@
 #include "Zeituebersicht.hpp"
-#include "wx/string.h"
-
 
 Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_title)
 :SubWindow(parent, DB,this_title){

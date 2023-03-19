@@ -1,14 +1,10 @@
 #include "Benutzereinstellungen.hpp"
 
-
-
-
 Benutzereinstellungen::Benutzereinstellungen(wxFrame* parent, cppDatabase* DB, const wxString& this_title):SubWindow(parent, DB,this_title){
     //Initialisierung aller sichtbaren Elemente///////////////////////////////////////////////////////////////////////
     lables[(int)b_lbl::Mindestalter] = new wxStaticText(this,wxID_ANY,"Mindestalter");
     lables[(int)b_lbl::MaxStdProTag] = new wxStaticText(this,wxID_ANY,"Max. Stunden");
     lables[(int)b_lbl::MinUsernameLen] = new wxStaticText(this,wxID_ANY,"Min. Username");
-
 
     text_ctrls[(int)b_tc::Mindestalter] = new wxTextCtrl(this,wxID_ANY);
     text_ctrls[(int)b_tc::MaxStdProTag] = new wxTextCtrl(this,wxID_ANY);
@@ -84,9 +80,7 @@ bool Benutzereinstellungen::load_all_values(){
     text_ctrls[(int)b_tc::MaxStdProTag]->SetValue(str_max_hrs);
     text_ctrls[(int)b_tc::MinUsernameLen]->SetValue(str_min_len);
     
-
     return true;
-    
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Benutzereinstellungen::load_all_values: " +  (std::string)e.what());

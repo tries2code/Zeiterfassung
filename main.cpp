@@ -54,7 +54,8 @@ bool App::OnInit(){
 
     std::string str_mode = (debug_mode)?"Debug_Mode":"Release_Mode";
     MainFrame *frame = new MainFrame("[Programm-Name]-"+str_mode, wxPoint(50, 50), wxSize(1100, 600), DB );
-
+    
+    LOG::log_msg("PROGRAMM START");
     frame->Show( true );
     return true;
 }

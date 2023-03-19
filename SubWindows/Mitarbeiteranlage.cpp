@@ -1,10 +1,4 @@
 #include "Mitarbeiteranlage.hpp"
-#include "wx/datetime.h"
-#include "wx/gtk/cursor.h"
-#include "wx/textctrl.h"
-#include <exception>
-#include <string>
-
 
 Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxString& this_title)
 :SubWindow(parent, DB, this_title){
@@ -136,20 +130,8 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
     if(!check_entries())return;
 
     //Datum formatieren
-    wxDateTime vertragsstart = {
-            start_date->GetValue().GetDay(), 
-          start_date->GetValue().GetMonth(),
-           start_date->GetValue().GetYear(),
-           0,0,0,0
-    };
-    wxDateTime geburtstag = {
-            birth_date->GetValue().GetDay(), 
-          birth_date->GetValue().GetMonth(),
-           birth_date->GetValue().GetYear(),
-           0,0,0,0
-    };
-    wxString strVertragsstart = vertragsstart.Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessagebox
-    wxString strGeburtstag = geburtstag.Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessagebox
+    wxString strVertragsstart = start_date->GetValue().Format(wxT("%d.%m.%Y"));  //Formatierung für wxMessagebox
+    wxString strGeburtstag = birth_date->GetValue().Format(wxT("%d.%m.%Y"));        //Formatierung für wxMessagebox
 
     //Angaben vom Nutzer prüfen lassen
     int choice = wxMessageBox( 
@@ -166,8 +148,8 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
 
     //Mitarbeiter anlegen
     if(choice == 2){
-      strVertragsstart = vertragsstart.Format(wxT("%y-%m-%d %H:%M:%S"));  //Formatierung für DB-Eintrag
-      strGeburtstag = geburtstag.Format(wxT("%y-%m-%d %H:%M:%S"));        //Formatierung für DB-Eintrag
+      strVertragsstart = start_date->GetValue().Format(wxT("%Y-%m-%d"));  //Formatierung für DB-Eintrag
+      strGeburtstag = birth_date->GetValue().Format(wxT("%Y-%m-%d"));        //Formatierung für DB-Eintrag
       wxString strSQL =  "call SP_INSERT_MA('"
       +wxString::FromUTF8(text_ctrls[(int)m_tc::Vorname]->GetValue().mb_str(wxConvUTF8))+"','"
       +wxString::FromUTF8(text_ctrls[(int)m_tc::Name]->GetValue().mb_str(wxConvUTF8))+"','"
