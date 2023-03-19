@@ -134,12 +134,28 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
       return;
     }
 
-//  Prüfung auf Zeitüberlappung////////////
+//  Prüfung auf Zeitüberlappung und ob Zeitraum vor Vertragsbeginn oder in der Zukunft liegt////////////
     strSQL = "call SP_CHECK_Arbeitszeiten('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+Anfangszeit.ToStdString()+"', '"+Endzeit.ToStdString()+"')";
     wxString check = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+    if(check == "-9"){
+      wxMessageBox( 
+        wxString::FromUTF8(cbo_benutzer->GetValue()+" war am "+start.Format("%d.%m.%Y")+" noch nicht angestellt."),
+        wxString::FromUTF8("Zeitraum nicht plausibel!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
+    if(check == "-8"){
+      wxMessageBox( 
+        wxString::FromUTF8("Der "+start.Format("%d.%m.%Y")+" liegt in der Zukunft."),
+        wxString::FromUTF8("Zeitraum nicht plausibel!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
     if(check != "0"){
       wxMessageBox( 
-        wxString::FromUTF8(cbo_benutzer->GetValue()+" hat innerhalb des angegebenen Zeitraums \nvon "+start.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbis  "+end.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbereits ein Eintrag!"),
+        wxString::FromUTF8(cbo_benutzer->GetValue()+" hat innerhalb des angegebenen Zeitraums \nvon "+start.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbis  "+end.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbereits ein Eintrag."),
         wxString::FromUTF8("Zeitraum nicht plausibel!"),
         wxOK|wxICON_ERROR
       );
