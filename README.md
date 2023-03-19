@@ -1,4 +1,6 @@
 "Zeiterfassung"(Arbeitstitel) ist ein Hobby-Projekt und hat nicht den Anspruch in einem realen Betrieb Verwendung zu finden.
+Das ist mein erstes Projekt mit MySQL und wxWidgets.
+
 Nicht in diesem Repository enthalten ist das benötigte Datenbank-Model, sowie der "Resources"-Ordner.
 Beides ist für die Ausführung des Programms notwendig. Wer sich die Dantenbank(MySQL) selbst erstellt, sollte zusätzlich
 einen "Resources"-Ordner anlegen und darin die Dateien app_Icon.png und database.xml hinterlegen.
@@ -41,3 +43,6 @@ Mitarbeiterverwaltung:
     -Anpassung Hinterlegter Mitarbeiter-Daten
     -Passwort kann zurückgestzt werden(Initiales Passwort->Konfigurierbar)
     -Mitarbeiter auslagern -> Daten werden archiviert
+
+Benutzereinstellun:
+    -Anpassung allgemeiner Einstellungen (Mindest-Eintrittsalter, Mindestlänge für Benutzernamen, etc)

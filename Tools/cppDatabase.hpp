@@ -9,6 +9,7 @@
 
 #include "XML.hpp"
 #include "TEA.hpp"
+#include "LOG.hpp"
 
 
 class cppDatabase{

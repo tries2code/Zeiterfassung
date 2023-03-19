@@ -3,6 +3,8 @@
 #include <fstream>
 #include <cstring>
 
+#include "LOG.hpp"
+
 class XML{
 
     private:

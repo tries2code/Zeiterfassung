@@ -1,4 +1,5 @@
 #include "cppDatabase.hpp"
+#include <exception>
 
 
 cppDatabase::cppDatabase(char* host, char* usr, char* pwd, char* db):host(host),usr(usr),pwd(pwd),db(db){}
@@ -32,11 +33,10 @@ bool cppDatabase::Init(){
 
         conn_db = mysql_real_connect(alpha_db, host, usr, pwd, db, 0, NULL, 0);
         if (!conn_db) {
-            std::cerr<<"Fehler bei der Datenbank-Anmeldung: \n" << mysql_error(alpha_db)<<"\nBitte kontrollieren Sie die Verbindung zur Datenbank!";
+            LOG::log_msg("FEHLER bei der Datenbank-Anmeldung: " + (std::string)mysql_error(alpha_db) + " Bitte kontrollieren Sie die Verbindung zur Datenbank!");
             mysql_close(conn_db);
             return false;
         }
-
         if(login_from_xml){
             delete xml_reader;
             delete host;
@@ -44,11 +44,10 @@ bool cppDatabase::Init(){
             delete pwd;
             delete db;
         }
-        
         return true;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in cppDatabase::Init: " << e.what();
+        LOG::log_msg("FEHLER in cppDatabase::Init: " +  (std::string)e.what());
         return false;
     }
 }
@@ -74,7 +73,7 @@ std::string cppDatabase::get_string_from_db(const char* strSQL){
         return output;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in cppDatabase::get_string_from_db: " << e.what();
+        LOG::log_msg("FEHLER in cppDatabase::get_string_from_db: " +  (std::string)e.what());
         return "error";
     }
 };
@@ -99,7 +98,7 @@ MYSQL_ROW cppDatabase::get_row_from_db(const char* strSQL){
         return output;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in cppDatabase::get_row_from_db: " << e.what();
+        LOG::log_msg("FEHLER in cppDatabase::get_row_from_db: " +  (std::string)e.what());
         return MYSQL_ROW();
     }
 };
@@ -118,7 +117,7 @@ bool cppDatabase::execute_SQL(const char* strSQL){
         return fehler_bei_ausfuehrung;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in cppDatabase::executeSQL: " << e.what();
+        LOG::log_msg("FEHLER in cppDatabase::executeSQL: " +  (std::string)e.what());
         return false;
     }
 };
@@ -144,7 +143,7 @@ bool cppDatabase::fill_combobox(wxComboBox* cbo,const char* strSQL){
         return true;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in cppDatabase::fill_combobox: " << e.what();
+        LOG::log_msg("FEHLER in cppDatabase::fill_combobox: " +  (std::string)e.what());
         return false;
     }
 };
@@ -183,7 +182,7 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
         return true;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in cppDatabase::fill_grid: " << e.what();
+        LOG::log_msg("FEHLER in cppDatabase::fill_grid: " +  (std::string)e.what());
         return false;
     }
 };

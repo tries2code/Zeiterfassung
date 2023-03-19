@@ -70,7 +70,7 @@ void Benutzereinstellungen::on_save(wxCommandEvent& event){
     db->execute_SQL(strSQL.c_str());
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Benutzereinstellungen::on_save: " << e.what();
+    LOG::log_msg("FEHLER in Benutzereinstellungen::on_save: " +  (std::string)e.what());
   }
 }
 
@@ -89,7 +89,7 @@ bool Benutzereinstellungen::load_all_values(){
     
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Benutzereinstellungen::load_all_values: " << e.what();
+    LOG::log_msg("FEHLER in Benutzereinstellungen::load_all_values: " +  (std::string)e.what());
     return false;
   }
 }
@@ -128,7 +128,7 @@ bool Benutzereinstellungen::check_entries(std::string& str_min_age,std::string& 
     return true;
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Benutzereinstellungen::check_entries: " << e.what();
+    LOG::log_msg("FEHLER in Benutzereinstellungen::check_entries: " +  (std::string)e.what());
     return false;
   }                                     
 }

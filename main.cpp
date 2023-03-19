@@ -1,14 +1,5 @@
 #include "MainFrame.hpp"
-#include "SubWindows/Mitarbeiterverwaltung.hpp"
-#include <iostream>
-#include <string>
 
-
-#ifdef _DEBUG
-    #define dbg_mode true
-#else
-    #define dbg_mode false
-#endif
 
 class App: public wxApp{
     public:
@@ -61,7 +52,7 @@ bool App::OnInit(){
     //Eine Verbindung für alles
     cppDatabase* DB = new cppDatabase();
 
-    std::string str_mode = (dbg_mode)?"Debug_Mode":"Release_Mode";
+    std::string str_mode = (debug_mode)?"Debug_Mode":"Release_Mode";
     MainFrame *frame = new MainFrame("[Programm-Name]-"+str_mode, wxPoint(50, 50), wxSize(1100, 600), DB );
 
     frame->Show( true );

@@ -18,7 +18,7 @@ bool XML::get_file_text(const std::string& filename){
         return true;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in XML::get_file_text: " << e.what();
+        LOG::log_msg("FEHLER in XML::get_file_text: " +  (std::string)e.what());
         return false;
     }
 }
@@ -36,7 +36,7 @@ char* XML::get_XML_field(const std::string& field){
         return result;
     }
     catch(std::exception& e){
-        std::cerr<<"FEHLER in XML::get_XML_field: " << e.what();
+        LOG::log_msg("FEHLER in XML::get_XML_field: " +  (std::string)e.what());
         return (char*)"-1";
     }
 }

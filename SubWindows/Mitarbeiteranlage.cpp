@@ -202,7 +202,7 @@ void Mitarbeiteranlage::on_save(wxCommandEvent& event){
     }
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Mitarbeiteranlage::on_save: "<< e.what();
+    LOG::log_msg("FEHLER in Mitarbeiteranlage::on_save: " +  (std::string)e.what());
   }
 }
 
@@ -385,7 +385,7 @@ bool Mitarbeiteranlage::check_entries(){
     return true;
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Mitarbeiteranlage::check_entries: " << e.what();
+    LOG::log_msg("FEHLER in Mitarbeiteranlage::check_entries: " +  (std::string)e.what());
     return false;
   }
 }
@@ -410,7 +410,7 @@ void Mitarbeiteranlage::style_svnr_syntax(wxCommandEvent& event){
     }
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Mitarbeiteranlage::check_svnr_syntax: " << e.what();
+    LOG::log_msg("FEHLER in Mitarbeiteranlage::check_svnr_syntax: " +  (std::string)e.what());
   }
 }
 

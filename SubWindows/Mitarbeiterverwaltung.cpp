@@ -124,7 +124,7 @@ void Verwaltung::on_change_usr(wxCommandEvent& event){
     
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Verwaltung::on_change_ma: " << e.what();
+    LOG::log_msg("FEHLER in Verwaltung::on_change_ma: " +  (std::string)e.what());
   }
 }
 
@@ -175,7 +175,7 @@ void Verwaltung::on_update(wxCommandEvent& event){
     }
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Verwaltung::on_save: "<< e.what();
+    LOG::log_msg("FEHLER in Verwaltung::on_save: " +  (std::string)e.what());
   }
 }
 
@@ -210,10 +210,9 @@ void Verwaltung::on_reset_pw(wxCommandEvent& event){
         wxOK|wxICON_INFORMATION
       );
     }
-    
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Verwaltung::on_reset_pw: "<< e.what();
+    LOG::log_msg("FEHLER in Verwaltung::on_reset_pw: " +  (std::string)e.what());
   }
 }
 
@@ -258,7 +257,7 @@ void Verwaltung::on_unload(wxCommandEvent& event){
     
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Verwaltung::on_unload: "<< e.what();
+    LOG::log_msg("FEHLER in Verwaltung::on_unload: " +  (std::string)e.what());
   }
 }
 
@@ -304,7 +303,7 @@ bool Verwaltung::check_entries(){
     return true;
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Verwaltung::check_entries: " << e.what();
+    LOG::log_msg("FEHLER in Verwaltung::check_entries: " +  (std::string)e.what());
     return false;
   }
 }

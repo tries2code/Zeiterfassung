@@ -70,96 +70,98 @@ Zeiterfassung::Zeiterfassung(wxFrame* parent, cppDatabase* DB, const wxString& t
 }
 
 void Zeiterfassung::on_submit(wxCommandEvent& event){
-   
-  if(cbo_benutzer->GetValue() == default_str){
+  try{ 
+    if(cbo_benutzer->GetValue() == default_str){
+      wxMessageBox( 
+        wxString::FromUTF8("Bitte wählen Sie zunächst einen Mitarbeiter aus."),
+        wxString::FromUTF8("Angaben unvollständig!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
+
+    wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"')";
+    wxString entry_count = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+    if(entry_count =="0"){
+      wxMessageBox( 
+      wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+" ist kein registrierter Benutzer.\n"+wxString::FromUTF8("Bitte wählen Sie einen gültigen Benutzer aus."),
+      wxString::FromUTF8("Benutzer unbekannt!"),
+      wxOK|wxICON_ERROR);
+      return;
+    }
+    wxDateTime start = {
+            start_date->GetValue().GetDay(),
+          start_date->GetValue().GetMonth(),
+           start_date->GetValue().GetYear(),
+           start_time->GetValue().GetHour(),
+         start_time->GetValue().GetMinute(),
+         start_time->GetValue().GetSecond(),
+       start_time->GetValue().GetMillisecond()
+    };
+
+    wxDateTime end = {
+            show_end_date? end_date->GetValue().GetDay() : start_date->GetValue().GetDay() ,
+          show_end_date? end_date->GetValue().GetMonth() : start_date->GetValue().GetMonth(),
+           show_end_date? end_date->GetValue().GetYear() : start_date->GetValue().GetYear(),
+           end_time->GetValue().GetHour(),
+         end_time->GetValue().GetMinute(),
+         end_time->GetValue().GetSecond(),          
+       end_time->GetValue().GetMillisecond()
+    };
+
+    wxString Anfangszeit = start.Format(wxT("%y-%m-%d %H:%M:%S"));
+    wxString Endzeit = end.Format(wxT("%y-%m-%d %H:%M:%S"));
+
+    //Prüfung des Zeitraums////////////
+    if(start > end){
+       wxMessageBox( 
+        "Dienstende("+end.Format(" %H:%M Uhr am %d.%m.%Y ")+")\ndarf nicht vor \nDienstbeginn("+start.Format(" %H:%M Uhr am %d.%m.%Y ")+") liegen!",
+        wxString::FromUTF8("Angaben nicht plausibel!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
+
+    //Prüfung max_Tagesarbeitszeit////////////
+    std::string str_max_hours_per_day = db->get_string_from_db("call SP_GET_Konfiguration('max_h_pro_tag')");
+    std::string hours = std::to_string((end.GetTicks() - start.GetTicks()) / float(60*60));
+    if(std::stof(hours) > std::stof(str_max_hours_per_day)){
+       wxMessageBox( 
+        wxString::FromUTF8("Maximale Arbeitszeit pro Tag("+str_max_hours_per_day+" Stunden) überschritten.\nEingegebene Stundenanzahl: "+hours.substr(0,hours.length()-4)+" Stunden."),
+        wxString::FromUTF8("Speichern nicht möglich!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
+
+//  Prüfung auf Zeitüberlappung////////////
+    strSQL = "call SP_CHECK_Arbeitszeiten('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+Anfangszeit.ToStdString()+"', '"+Endzeit.ToStdString()+"')";
+    wxString check = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
+    if(check != "0"){
+      wxMessageBox( 
+        wxString::FromUTF8(cbo_benutzer->GetValue()+" hat innerhalb des angegebenen Zeitraums \nvon "+start.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbis  "+end.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbereits ein Eintrag!"),
+        wxString::FromUTF8("Zeitraum nicht plausibel!"),
+        wxOK|wxICON_ERROR
+      );
+      return;
+    }
+    //Prüfung Ende//////////////////////////////////////////////////////////////////
+
+    strSQL = "call SP_INSERT_Arbeitszeit('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+Anfangszeit.ToStdString()+"', '"+Endzeit.ToStdString()+"')";
+    bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));
+
+    // Enddatum nach dem senden verbergen, falls sichtbar
+    if(show_end_date)toggle();
+
     wxMessageBox( 
-      wxString::FromUTF8("Bitte wählen Sie zunächst einen Mitarbeiter aus."),
-      wxString::FromUTF8("Angaben unvollständig!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
+    fail ? "SQL Insert Fehlgeschlagen" : "SQL Insert Erfolgreich",
+    "Ausgabe der DB", 
+      wxOK | wxICON_INFORMATION 
+    ); 
   }
-
-  wxString strSQL = "call SP_CHECK_Benutzername('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"')";
-  wxString entry_count = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
-  if(entry_count =="0"){
-    wxMessageBox( 
-    wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+" ist kein registrierter Benutzer.\n"+wxString::FromUTF8("Bitte wählen Sie einen gültigen Benutzer aus."),
-    wxString::FromUTF8("Benutzer unbekannt!"),
-    wxOK|wxICON_ERROR);
-    return;
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Zeiterfassung::on_submit: " +  (std::string)e.what());
   }
-  wxDateTime start = {
-          start_date->GetValue().GetDay(),
-        start_date->GetValue().GetMonth(),
-         start_date->GetValue().GetYear(),
-         start_time->GetValue().GetHour(),
-       start_time->GetValue().GetMinute(),
-       start_time->GetValue().GetSecond(),
-     start_time->GetValue().GetMillisecond()
-  };
-
-  wxDateTime end = {
-          show_end_date? end_date->GetValue().GetDay() : start_date->GetValue().GetDay() ,
-        show_end_date? end_date->GetValue().GetMonth() : start_date->GetValue().GetMonth(),
-         show_end_date? end_date->GetValue().GetYear() : start_date->GetValue().GetYear(),
-         end_time->GetValue().GetHour(),
-       end_time->GetValue().GetMinute(),
-       end_time->GetValue().GetSecond(),          
-     end_time->GetValue().GetMillisecond()
-  };
-         
-  wxString Anfangszeit = start.Format(wxT("%y-%m-%d %H:%M:%S"));
-  wxString Endzeit = end.Format(wxT("%y-%m-%d %H:%M:%S"));
-
-  //Prüfung des Zeitraums////////////
-  if(start > end){
-     wxMessageBox( 
-      "Dienstende("+end.Format(" %H:%M Uhr am %d.%m.%Y ")+")\ndarf nicht vor \nDienstbeginn("+start.Format(" %H:%M Uhr am %d.%m.%Y ")+") liegen!",
-      wxString::FromUTF8("Angaben nicht plausibel!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
-
-//Prüfung max_Tagesarbeitszeit////////////
-  std::string str_max_hours_per_day = db->get_string_from_db("call SP_GET_Konfiguration('max_h_pro_tag')");
-  std::string hours = std::to_string((end.GetTicks() - start.GetTicks()) / float(60*60));
-  if(std::stof(hours) > std::stof(str_max_hours_per_day)){
-     wxMessageBox( 
-      wxString::FromUTF8("Maximale Arbeitszeit pro Tag("+str_max_hours_per_day+" Stunden) überschritten.\nEingegebene Stundenanzahl: "+hours.substr(0,hours.length()-4)+" Stunden."),
-      wxString::FromUTF8("Speichern nicht möglich!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
-
-
-
-//Prüfung auf Zeitüberlappung////////////
-  strSQL = "call SP_CHECK_Arbeitszeiten('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+Anfangszeit.ToStdString()+"', '"+Endzeit.ToStdString()+"')";
-  wxString check = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
-  if(check != "0"){
-    wxMessageBox( 
-      wxString::FromUTF8(cbo_benutzer->GetValue()+" hat innerhalb des angegebenen Zeitraums \nvon "+start.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbis  "+end.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbereits ein Eintrag!"),
-      wxString::FromUTF8("Zeitraum nicht plausibel!"),
-      wxOK|wxICON_ERROR
-    );
-    return;
-  }
-  //Prüfung Ende//////////////////////////////////////////////////////////////////
-
-  strSQL = "call SP_INSERT_Arbeitszeit('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+Anfangszeit.ToStdString()+"', '"+Endzeit.ToStdString()+"')";
-  bool fail = db->execute_SQL(strSQL.mb_str(wxConvUTF8));
-
-  // Enddatum nach dem senden verbergen, falls sichtbar
-  if(show_end_date)toggle();
-
-  wxMessageBox( 
-  fail ? "SQL Insert Fehlgeschlagen" : "SQL Insert Erfolgreich",
-  "Ausgabe der DB", 
-    wxOK | wxICON_INFORMATION 
-  ); 
 }
 
 void Zeiterfassung::on_toggle(wxCommandEvent& event){
@@ -167,13 +169,17 @@ void Zeiterfassung::on_toggle(wxCommandEvent& event){
 }
 
 void Zeiterfassung::toggle(){
-   
-  end_date->SetValue(start_date->GetValue());
-  show_end_date = !show_end_date;
-  end_date->Show(show_end_date);
-  lables[(int)z_lbl::Enddatum]->Show(show_end_date);
-  btn_toggle_end_date->SetLabel(show_end_date ? str_lbl_with_ed : str_lbl_no_ed);
-  btn_toggle_end_date->SetSize(show_end_date ? wxSize((str_lbl_with_ed.length()*10+20),35) : wxSize((str_lbl_no_ed.length()*10+20),35));
+  try{
+    end_date->SetValue(start_date->GetValue());
+    show_end_date = !show_end_date;
+    end_date->Show(show_end_date);
+    lables[(int)z_lbl::Enddatum]->Show(show_end_date);
+    btn_toggle_end_date->SetLabel(show_end_date ? str_lbl_with_ed : str_lbl_no_ed);
+    btn_toggle_end_date->SetSize(show_end_date ? wxSize((str_lbl_with_ed.length()*10+20),35) : wxSize((str_lbl_no_ed.length()*10+20),35));
+  }
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Zeiterfassung::toggle: " +  (std::string)e.what());
+  }
 }
 
 Zeiterfassung::~Zeiterfassung(){

@@ -114,7 +114,7 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
     lables[(int)u_lbl::Stunden]->SetLabel("Insgesamt: " + str_Sum + " Stunden");
   }
  catch(std::exception& e){
-    std::cerr<<"FEHLER in Uebersicht::on_show_times: " << e.what();
+    LOG::log_msg("FEHLER in Uebersicht::on_show_times: " +  (std::string)e.what());
   }
 }
 
@@ -151,12 +151,13 @@ void Uebersicht::on_change_usr(wxCommandEvent& event){
     combo_boxen[(int)u_cbo::Jahr]->SetToolTip("");
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Uebersicht::on_change_ma: " << e.what();
+    LOG::log_msg("FEHLER in Uebersicht::on_change_ma: " +  (std::string)e.what());
   }
 }
 
 void Uebersicht::on_enter_year(wxCommandEvent& event){
-if(combo_boxen[(int)u_cbo::Benutzer]->GetValue() == default_str){
+  try{
+    if(combo_boxen[(int)u_cbo::Benutzer]->GetValue() == default_str){
       wxMessageBox( 
         wxString::FromUTF8("Bitte wählen Sie zunächst einen Mitarbeiter aus."),
         wxString::FromUTF8("Jahr(e) noch nicht verfügbar!"),
@@ -164,6 +165,10 @@ if(combo_boxen[(int)u_cbo::Benutzer]->GetValue() == default_str){
       );
       return;
     }
+  }
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Uebersicht::on_enter_year: " +  (std::string)e.what());
+  }
   
 }
 
@@ -185,7 +190,7 @@ bool Uebersicht::set_up_grid(){
     return true;
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Uebersicht::set_up_grid: " << e.what();
+    LOG::log_msg("FEHLER in Uebersicht::set_up_grid: " +  (std::string)e.what());
     return false;
   }
 }
@@ -216,7 +221,7 @@ bool Uebersicht::set_up_combos(){
     return true;
   }
   catch(std::exception& e){
-    std::cerr<<"FEHLER in Uebersicht::set_up_combo: " << e.what();
+    LOG::log_msg("FEHLER in Uebersicht::set_up_combo: " +  (std::string)e.what());
     return false;
   }
 }
