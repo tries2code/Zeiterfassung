@@ -1,4 +1,5 @@
 #include "MainFrame.hpp"
+#include "SubWindows/Mitarbeiterverwaltung.hpp"
 
 
 class App: public wxApp{
@@ -35,7 +36,8 @@ wxBEGIN_EVENT_TABLE(Mitarbeiteranlage, SubWindow)
 wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(Verwaltung, SubWindow)
-    EVT_TEXT(ID_cbo, Verwaltung::on_change_usr)
+    EVT_TEXT(ID_cbo_usr, Verwaltung::on_change_usr)
+    EVT_COMBOBOX(ID_cbo_tarif, Verwaltung::on_change_tarif)
     EVT_BUTTON(ID_Update_btn, Verwaltung::on_update)
     EVT_BUTTON(ID_ResetPW_btn, Verwaltung::on_reset_pw)
     EVT_BUTTON(ID_Unload_btn, Verwaltung::on_unload)

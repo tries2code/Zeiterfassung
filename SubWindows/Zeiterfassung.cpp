@@ -139,7 +139,7 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
     wxString check = db->get_string_from_db(strSQL.mb_str(wxConvUTF8));
     if(check == "-9"){
       wxMessageBox( 
-        wxString::FromUTF8(cbo_benutzer->GetValue()+" war am "+start.Format("%d.%m.%Y")+" noch nicht angestellt."),
+        wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8)) + wxString::FromUTF8(" war am "+start.Format("%d.%m.%Y")+" noch nicht angestellt."),
         wxString::FromUTF8("Zeitraum nicht plausibel!"),
         wxOK|wxICON_ERROR
       );
@@ -155,7 +155,7 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
     }
     if(check != "0"){
       wxMessageBox( 
-        wxString::FromUTF8(cbo_benutzer->GetValue()+" hat innerhalb des angegebenen Zeitraums \nvon "+start.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbis  "+end.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbereits ein Eintrag."),
+        wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8)) + wxString::FromUTF8(" hat innerhalb des angegebenen Zeitraums \nvon "+start.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbis  "+end.Format(" %H:%M Uhr am %d.%m.%Y ")+" \nbereits ein Eintrag."),
         wxString::FromUTF8("Zeitraum nicht plausibel!"),
         wxOK|wxICON_ERROR
       );
