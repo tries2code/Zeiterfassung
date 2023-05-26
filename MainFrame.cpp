@@ -25,7 +25,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     menu_Mitarbeiter->Append(ID_Verwaltung,"&Verwalten \tCtrl-W", wxString::FromUTF8("Mitarbeiter verwalten."));
 
     wxMenu *menu_Einstellungen = new wxMenu;
-    menu_Einstellungen->Append(ID_Benutzereinstellungen,"&Benutzer \tCtrl-B", wxString::FromUTF8("Einstellungen für Mitarbeiter."));
+    menu_Einstellungen->Append(ID_Benutzereinstellungen,"&Mitarbeiter \tCtrl-B", wxString::FromUTF8("Einstellungen für Mitarbeiter."));
+    menu_Einstellungen->Append(ID_Tarifeinstellungen,"&Tarife \tCtrl-T", wxString::FromUTF8("Tarife einsehen, erstellen, und löschen."));
 
     wxMenu *menu_Hilfe = new wxMenu;
     menu_Hilfe->Append(wxID_ABOUT,"&Hilfe \tCtrl-H", wxString::FromUTF8("Nützliche Informationen."));
@@ -48,6 +49,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
     this->SetWindowStyleFlag(wxDEFAULT_FRAME_STYLE & ~wxRESIZE_BORDER);
     //wxDEFAULT_FRAME_STYLE besteht aus folgenden Styles wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCAPTION | wxCLOSE_BOX | wxCLIP_CHILDREN. 
     // & ~ ist(sind?) Bitwise-Operator(s) aus C. In diesem Fall deaktivieren sie wxRESIZE_BORDER in wxDEFAULT_FRAME_STYLE
+
+    LOG::log_msg("PROGRAMM START");
 }
 
 void MainFrame::OnExit(wxCommandEvent& event){
@@ -84,6 +87,11 @@ void MainFrame::on_edit_employee(wxCommandEvent& event){
 void MainFrame::on_edit_employee_settings(wxCommandEvent& event){
     DestroyChildren();
     Subwindows[(int)sub::Benutzereinstellungen] = new Benutzereinstellungen(this,db, "Benutzereinstellungen");
+}
+
+void MainFrame::on_edit_tarife(wxCommandEvent& event){
+    DestroyChildren();
+    Subwindows[(int)sub::Tarifeinstellungen] = new Tarife(this,db, "Tarife");
 }
 
 ///////////////Hilfsfunktionen///////////////////////

@@ -126,9 +126,9 @@ void Verwaltung::on_change_usr(wxCommandEvent& event){
 
     //Folgender Block versteckt Elemente, falls die aus einem vorangegangenem Vorgang noc sichtbar sind
     if(tarif_changed){
-    tarif_changed = false;
-    lables[(int)v_lbl::Tarifdatum]->Hide();
-    tarif_date->Hide();
+      tarif_changed = false;
+      lables[(int)v_lbl::Tarifdatum]->Hide();
+      tarif_date->Hide();
     }
     
     if(cbo_benutzer->GetValue() == default_str)return;
@@ -157,6 +157,8 @@ void Verwaltung::on_change_usr(wxCommandEvent& event){
     LOG::log_msg("FEHLER in Verwaltung::on_change_ma: " +  (std::string)e.what());
   }
 }
+
+
 void Verwaltung::on_change_tarif(wxCommandEvent& event){
   try{
     
@@ -164,20 +166,20 @@ void Verwaltung::on_change_tarif(wxCommandEvent& event){
     //Prüfen ob benutzer vorhanden ist
     int index = cbo_benutzer->GetStrings().Index(cbo_benutzer->GetValue());
     if(index<0){
-      
       tarif_changed = false;
       lables[(int)v_lbl::Tarifdatum]->Hide();
       tarif_date->Hide();
       return;
     }
     tarif_changed= true;
-
     lables[(int)v_lbl::Tarifdatum]->Show();
     tarif_date->Show();
-    
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Verwaltung::on_change_tarif: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Verwaltung::on_change_tarif");
   }
 }
 
@@ -257,6 +259,9 @@ void Verwaltung::on_update(wxCommandEvent& event){
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Verwaltung::on_save: " +  (std::string)e.what());
   }
+  catch(...){
+    LOG::log_msg("FEHLER in Verwaltung::on_save");
+  }
 }
 
 
@@ -293,6 +298,9 @@ void Verwaltung::on_reset_pw(wxCommandEvent& event){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Verwaltung::on_reset_pw: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Verwaltung::on_reset_pw");
   }
 }
 
@@ -338,6 +346,9 @@ void Verwaltung::on_unload(wxCommandEvent& event){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Verwaltung::on_unload: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Verwaltung::on_unload");
   }
 }
 
@@ -407,6 +418,10 @@ bool Verwaltung::check_entries(){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Verwaltung::check_entries: " +  (std::string)e.what());
+    return false;
+  }
+   catch(...){
+    LOG::log_msg("FEHLER in Verwaltung::check_entries");
     return false;
   }
 }

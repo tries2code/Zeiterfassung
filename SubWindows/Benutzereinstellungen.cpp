@@ -68,6 +68,9 @@ void Benutzereinstellungen::on_save(wxCommandEvent& event){
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Benutzereinstellungen::on_save: " +  (std::string)e.what());
   }
+  catch(...){
+    LOG::log_msg("FEHLER in Benutzereinstellungen::on_save");
+  }
 }
 
 bool Benutzereinstellungen::load_all_values(){
@@ -84,6 +87,10 @@ bool Benutzereinstellungen::load_all_values(){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Benutzereinstellungen::load_all_values: " +  (std::string)e.what());
+    return false;
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Benutzereinstellungen::load_all_values");
     return false;
   }
 }
@@ -123,6 +130,10 @@ bool Benutzereinstellungen::check_entries(std::string& str_min_age,std::string& 
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Benutzereinstellungen::check_entries: " +  (std::string)e.what());
+    return false;
+  }     
+  catch(...){
+    LOG::log_msg("FEHLER in Benutzereinstellungen::check_entries");
     return false;
   }                                     
 }

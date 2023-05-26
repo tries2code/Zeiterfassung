@@ -111,8 +111,11 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
     str_Sum = str_Sum.substr(0,str_Sum.length()-4);
     lables[(int)u_lbl::Stunden]->SetLabel("Insgesamt: " + str_Sum + " Stunden");
   }
- catch(std::exception& e){
+  catch(std::exception& e){
     LOG::log_msg("FEHLER in Uebersicht::on_show_times: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::on_show_times");
   }
 }
 
@@ -151,6 +154,9 @@ void Uebersicht::on_change_usr(wxCommandEvent& event){
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Uebersicht::on_change_ma: " +  (std::string)e.what());
   }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::on_change_ma");
+  }
 }
 
 void Uebersicht::on_enter_year(wxCommandEvent& event){
@@ -167,7 +173,9 @@ void Uebersicht::on_enter_year(wxCommandEvent& event){
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Uebersicht::on_enter_year: " +  (std::string)e.what());
   }
-  
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::on_enter_year");
+  }
 }
 
 bool Uebersicht::set_up_grid(){
@@ -189,6 +197,10 @@ bool Uebersicht::set_up_grid(){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Uebersicht::set_up_grid: " +  (std::string)e.what());
+    return false;
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::set_up_grid");
     return false;
   }
 }
@@ -220,6 +232,10 @@ bool Uebersicht::set_up_combos(){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Uebersicht::set_up_combo: " +  (std::string)e.what());
+    return false;
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::set_up_combo");
     return false;
   }
 }

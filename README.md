@@ -16,7 +16,7 @@ Verwendete Technologien:
 ////ANLEITUNG und FEATURES////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-Zeiterfassung:
+Zeit - Erfassen:
     -Nur für angelegte Mitarbeiter möglich
     -Lässt keine Negativen Zeitangaben zu
     -Lässt keine Zeitüberlappung zu
@@ -24,7 +24,7 @@ Zeiterfassung:
     -Eingabe eines abweichenden Enddatums ist möglich
 
 
-Übersicht:
+Zeit - Übersicht:
     -Nur für angelegte Mitarbeiter möglich
     -Nur Jahre in denen der jeweilige Mitarbeiter tätig war stehen zur Auswahl
     -Mitarbeiterauswahl per Dropdown oder Autocomplete
@@ -32,17 +32,24 @@ Zeiterfassung:
     -Zeigt die Gesamt-Zeit der aktuellen Auswahl in Stunden an
 
 
-Mitarbeiteranlage:
+Mitarbeiter - Anlegen:
   -Zur Anlage neuer Mitarbeiter
   -Prüft ob der Benutzername bereits in der Datenbank vorhanden ist, und fordert gegebenenfalls eine Alternative
   -Prüft Altersangabe auf Plausibilität
   -Prüft Altersangabe auf Mindesteintrittsalter(konfigurierbar)
   -Prüft SV-Nummer(Format, Peronenbeogene Daten)
 
-Mitarbeiterverwaltung:
+Mitarbeiter - Verwalten:
     -Anpassung Hinterlegter Mitarbeiter-Daten
     -Passwort kann zurückgestzt werden(Initiales Passwort->Konfigurierbar)
     -Mitarbeiter auslagern -> Daten werden archiviert
 
-Benutzereinstellun:
+Einstellungen - Mitarbeiter:
     -Anpassung allgemeiner Einstellungen (Mindest-Eintrittsalter, Mindestlänge für Benutzernamen, etc)
+
+Einstellungen - Tarife:
+    -Zeigt Deteils aller Tarife
+    -Tarife können gelöscht werden. Gelöschte Tarife können lediglich nicht mehr vergeben werden, laufende Verträge         
+     behalten aber ihre Gültigkeit.
+    -Tarife anlegen
+     

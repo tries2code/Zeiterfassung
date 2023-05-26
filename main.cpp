@@ -16,6 +16,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(ID_Mitarbeiteranlage, MainFrame::on_new_employee)
     EVT_MENU(ID_Verwaltung, MainFrame::on_edit_employee)
     EVT_MENU(ID_Benutzereinstellungen, MainFrame::on_edit_employee_settings)
+    EVT_MENU(ID_Tarifeinstellungen, MainFrame::on_edit_tarife)
 wxEND_EVENT_TABLE()
 
 //Event Table muss für jedes Subfenster erstellt werden
@@ -47,6 +48,14 @@ wxBEGIN_EVENT_TABLE(Benutzereinstellungen, SubWindow)
     EVT_BUTTON(ID_SaveSetting_btn, Benutzereinstellungen::on_save)
 wxEND_EVENT_TABLE()
 
+wxBEGIN_EVENT_TABLE(Tarife, SubWindow)
+    EVT_COMBOBOX(ID_cbo_tarif_edit, Tarife::on_change_tarif)
+    EVT_BUTTON(ID_New_Tarif_btn, Tarife::on_new)
+    EVT_BUTTON(ID_Save_Tarif_btn, Tarife::on_save)
+    EVT_BUTTON(ID_Delete_Tarif_btn, Tarife::on_delete)
+wxEND_EVENT_TABLE()
+
+
 wxIMPLEMENT_APP(App);
 
 bool App::OnInit(){
@@ -57,7 +66,6 @@ bool App::OnInit(){
     std::string str_mode = (debug_mode)?"Debug_Mode":"Release_Mode";
     MainFrame *frame = new MainFrame("[Programm-Name]-"+str_mode, wxPoint(50, 50), wxSize(1100, 600), DB );
     
-    LOG::log_msg("PROGRAMM START");
     frame->Show( true );
     return true;
 }

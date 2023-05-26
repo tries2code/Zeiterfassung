@@ -15,5 +15,11 @@
     "lldb.showDisassembly": "auto",
     "lldb.dereferencePointers": true,
     "lldb.consoleMode": "commands",
-    "statsBar.location": "Right"
+    "statsBar.location": "Right",
+    "workbench.colorTheme": "Default Dark+",
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": false,
+    "editor.semanticTokenColorCustomizations": {},
+    "editor.tokenColorCustomizations": {},
+    "editor.suggest.showCustomcolors": true,
+    "editor.suggest.showClasses": true
 }

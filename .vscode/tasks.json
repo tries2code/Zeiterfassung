@@ -19,6 +19,7 @@
             "SubWindows/Mitarbeiteranlage.cpp",
             "SubWindows/Mitarbeiterverwaltung.cpp",
             "SubWindows/Benutzereinstellungen.cpp",
+            "SubWindows/Tarife.cpp",
             "MainFrame.cpp",
             "Tools/cppDatabase.cpp",
             "Tools/SubWindow.cpp",

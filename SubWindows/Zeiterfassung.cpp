@@ -178,6 +178,9 @@ void Zeiterfassung::on_submit(wxCommandEvent& event){
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Zeiterfassung::on_submit: " +  (std::string)e.what());
   }
+  catch(...){
+    LOG::log_msg("FEHLER in Zeiterfassung::on_submit");
+  }
 }
 
 void Zeiterfassung::on_toggle(wxCommandEvent& event){
@@ -195,6 +198,9 @@ void Zeiterfassung::toggle(){
   }
   catch(std::exception& e){
     LOG::log_msg("FEHLER in Zeiterfassung::toggle: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Zeiterfassung::toggle");
   }
 }
 

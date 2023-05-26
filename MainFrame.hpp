@@ -21,15 +21,15 @@
 #include "SubWindows/Mitarbeiteranlage.hpp"
 #include "SubWindows/Mitarbeiterverwaltung.hpp"
 #include "SubWindows/Benutzereinstellungen.hpp"
-
+#include "SubWindows/Tarife.hpp"
 
 enum class sub{
-    Zeiterfassung, Uebersicht, Mitarbeiteranlage, Verwaltung, Benutzereinstellungen, Summe_aller_fenster
+    Zeiterfassung, Uebersicht, Mitarbeiteranlage, Verwaltung, Benutzereinstellungen, Tarifeinstellungen, Summe_aller_fenster
 };
 
 //Für wxWidgets muss(?) es ein einfaches Enum sein
 enum{
-    ID_Zeiterfassung = 1, ID_Uebersicht, ID_Mitarbeiteranlage, ID_Verwaltung, ID_Benutzereinstellungen
+    ID_Zeiterfassung = 1, ID_Uebersicht, ID_Mitarbeiteranlage, ID_Verwaltung, ID_Benutzereinstellungen, ID_Tarifeinstellungen
 };
 
 class MainFrame: public wxFrame{
@@ -50,5 +50,6 @@ class MainFrame: public wxFrame{
         void on_new_employee(wxCommandEvent& event);
         void on_edit_employee(wxCommandEvent& event);
         void on_edit_employee_settings(wxCommandEvent& event);
+        void on_edit_tarife(wxCommandEvent& event);
         wxDECLARE_EVENT_TABLE();
 };
