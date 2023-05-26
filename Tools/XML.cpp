@@ -21,6 +21,10 @@ bool XML::get_file_text(const std::string& filename){
         LOG::log_msg("FEHLER in XML::get_file_text: " +  (std::string)e.what());
         return false;
     }
+    catch(...){
+        LOG::log_msg("FEHLER in XML::get_file_text");
+        return false;
+    }
 }
 
 char* XML::get_XML_field(const std::string& field){                                                          
@@ -37,6 +41,10 @@ char* XML::get_XML_field(const std::string& field){
     }
     catch(std::exception& e){
         LOG::log_msg("FEHLER in XML::get_XML_field: " +  (std::string)e.what());
+        return (char*)"-1";
+    }
+    catch(...){
+        LOG::log_msg("FEHLER in XML::get_XML_field");
         return (char*)"-1";
     }
 }

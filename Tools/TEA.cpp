@@ -14,6 +14,9 @@ TEA::TEA(){
 	catch(std::exception& e){
         LOG::log_msg("FEHLER in TEA::decrypt: " +  (std::string)e.what());
     }
+	catch(...){
+        LOG::log_msg("FEHLER in TEA::decrypt");
+    }
 }
 
 std::string TEA::decrypt(std::stringstream& sstr_in){
@@ -37,6 +40,10 @@ std::string TEA::decrypt(std::stringstream& sstr_in){
 	}
 	catch(std::exception& e){
         LOG::log_msg("FEHLER in TEA::decrypt: " +  (std::string)e.what());
+		return "-1";
+    }
+	catch(...){
+        LOG::log_msg("FEHLER in TEA::decrypt");
 		return "-1";
     }
 }
@@ -70,6 +77,10 @@ std::string TEA::encrypt(std::stringstream& sstr_in){
         LOG::log_msg("FEHLER in TEA::encrypt: " +  (std::string)e.what());
 		return "-1";
     }
+	catch(...){
+        LOG::log_msg("FEHLER in TEA::encrypt");
+		return "-1";
+    }
 }
 
 void TEA::encipher(const unsigned int* const v, unsigned int* const w) {
@@ -90,6 +101,9 @@ void TEA::encipher(const unsigned int* const v, unsigned int* const w) {
     catch(std::exception& e){
         LOG::log_msg("FEHLER in TEA::encipher: " +  (std::string)e.what());
     }
+	catch(...){
+        LOG::log_msg("FEHLER in TEA::encipher");
+    }
 }
 
 void TEA::decipher(const unsigned int* const v, unsigned int* const w) {
@@ -109,6 +123,9 @@ void TEA::decipher(const unsigned int* const v, unsigned int* const w) {
 	}
     catch(std::exception& e){
         LOG::log_msg("FEHLER in TEA::decipher: " +  (std::string)e.what());
+    }
+	catch(...){
+        LOG::log_msg("FEHLER in TEA::decipher");
     }
 }
 

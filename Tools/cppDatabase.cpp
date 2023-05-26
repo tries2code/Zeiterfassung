@@ -47,6 +47,10 @@ bool cppDatabase::Init(){
         LOG::log_msg("FEHLER in cppDatabase::Init: " +  (std::string)e.what());
         return false;
     }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::Init");
+        return false;
+    }
 }
 
 std::string cppDatabase::get_string_from_db(const char* strSQL){
@@ -71,6 +75,10 @@ std::string cppDatabase::get_string_from_db(const char* strSQL){
     }
     catch(std::exception& e){
         LOG::log_msg("FEHLER in cppDatabase::get_string_from_db: " +  (std::string)e.what());
+        return "error";
+    }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::get_string_from_db");
         return "error";
     }
 };
@@ -98,6 +106,10 @@ MYSQL_ROW cppDatabase::get_row_from_db(const char* strSQL){
         LOG::log_msg("FEHLER in cppDatabase::get_row_from_db: " +  (std::string)e.what());
         return MYSQL_ROW();
     }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::get_row_from_db");
+        return MYSQL_ROW();
+    }
 };
 
 
@@ -115,6 +127,10 @@ bool cppDatabase::execute_SQL(const char* strSQL){
     }
     catch(std::exception& e){
         LOG::log_msg("FEHLER in cppDatabase::executeSQL: " +  (std::string)e.what());
+        return false;
+    }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::executeSQL");
         return false;
     }
 };
@@ -141,6 +157,10 @@ bool cppDatabase::fill_combobox(wxComboBox* cbo,const char* strSQL){
     }
     catch(std::exception& e){
         LOG::log_msg("FEHLER in cppDatabase::fill_combobox: " +  (std::string)e.what());
+        return false;
+    }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::fill_combobox");
         return false;
     }
 };
@@ -180,6 +200,10 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
     }
     catch(std::exception& e){
         LOG::log_msg("FEHLER in cppDatabase::fill_grid: " +  (std::string)e.what());
+        return false;
+    }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::fill_grid");
         return false;
     }
 };
