@@ -1,4 +1,5 @@
 #include "cppDatabase.hpp"
+#include <mysql/mysql.h>
 
 cppDatabase::cppDatabase(char* host, char* usr, char* pwd, char* db):host(host),usr(usr),pwd(pwd),db(db){}
 cppDatabase::cppDatabase(){
@@ -169,7 +170,6 @@ bool cppDatabase::fill_combobox(wxComboBox* cbo,const char* strSQL){
 bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
     try{
         Init();
-      
         //Ändert Spracheinstellung für Monats- und Wochentagsnamen auf Deutsch
         mysql_query(conn_db, "SET @@lc_time_names = 'de_DE';");
 
@@ -204,6 +204,26 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
     }
     catch(...){
         LOG::log_msg("FEHLER in cppDatabase::fill_grid");
+        return false;
+    }
+};
+
+//DB wird beim Beenden in Dump-Datei gespeichert. Zurzeit nur lokal.
+//Es gibt noch ein weiteres Script im SQL-Docker Container, siehe in backUpDB.sh
+//Alle Scripts müssen überarbeitet oder ersetzt werden
+bool cppDatabase::backUpDB(){
+    try{
+        system("./Scripts/backUpDB.sh");
+        system("./Scripts/moveBackUp.sh");
+
+        return true;
+    }
+    catch(std::exception& e){
+        LOG::log_msg("FEHLER in cppDatabase::backUpDB: " +  (std::string)e.what());
+        return false;
+    }
+    catch(...){
+        LOG::log_msg("FEHLER in cppDatabase::backUpDB");
         return false;
     }
 };

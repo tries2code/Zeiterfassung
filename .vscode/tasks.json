@@ -15,6 +15,7 @@
             "-D__WXGTK__",
             "-pthread",
             "SubWindows/Zeiterfassung.cpp",
+            "SubWindows/Abwesenheiten.cpp",
             "SubWindows/Zeituebersicht.cpp",
             "SubWindows/Mitarbeiteranlage.cpp",
             "SubWindows/Mitarbeiterverwaltung.cpp",

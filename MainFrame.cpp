@@ -1,4 +1,5 @@
 #include "MainFrame.hpp"
+#include "SubWindows/Abwesenheiten.hpp"
 
 
 using time_point = std::chrono::system_clock::time_point;
@@ -15,6 +16,8 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
     wxMenu *menu_Zeit = new wxMenu;
     menu_Zeit->Append(ID_Zeiterfassung, "&Erfassen \tCtrl-E", "Hier ist die Zeiterfassung.");
+    menu_Zeit->AppendSeparator();
+    menu_Zeit->Append(ID_Austragen, wxString::FromUTF8("&Austragen \tCtrl-A"), "Abwesenheiten eintragen.");
     menu_Zeit->AppendSeparator();
     menu_Zeit->Append(ID_Uebersicht, wxString::FromUTF8("&Übersicht \tCtrl-U"), "Hier ist die Auflistung.");
     menu_Zeit->AppendSeparator();
@@ -68,6 +71,11 @@ void MainFrame::on_zeit(wxCommandEvent& event){
     Subwindows[(int)sub::Zeiterfassung] = new Zeiterfassung(this,db,"Zeiterfassung");
 }
 
+void MainFrame::on_austragen(wxCommandEvent& event){
+    DestroyChildren();
+    Subwindows[(int)sub::Austragen] = new Abwesenheiten(this,db,"Zeiten Austragen");
+}
+
 void MainFrame::on_show_times(wxCommandEvent& event){
     DestroyChildren();
     wxString title = wxString::FromUTF8("Zeitübersicht");
@@ -105,5 +113,6 @@ wxString get_time_point(const time_point& this_ime, const std::string& format){
 }
 
 MainFrame::~MainFrame(){
+    db->backUpDB();
     LOG::log_msg("PROGRAMM ENDE");
 }

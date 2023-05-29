@@ -23,6 +23,13 @@ Zeit - Erfassen:
     -Lässt keine Eingaben über der maximalen Arbeitszeit pro Tag(konfigurierbar) zu
     -Eingabe eines abweichenden Enddatums ist möglich
 
+Zeit - Austragen
+    -Urlaubs-, Krankheitstage oder ähnliches eintragen
+    -Nur für angelegte Mitarbeiter möglich
+    -Erst nach Vertrsgastart des Mitarbeiter möglich
+    -Lässt keine Negativen Zeitangaben zu
+    -Lässt keine Zeitüberlappung zu
+    -Prüfft ob innerhalb des angebenenen Zeitraums bereits hinterlegte Arbeitszeiten
 
 Zeit - Übersicht:
     -Nur für angelegte Mitarbeiter möglich

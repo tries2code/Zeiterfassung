@@ -1,4 +1,5 @@
 #include "MainFrame.hpp"
+#include "SubWindows/Abwesenheiten.hpp"
 #include "SubWindows/Mitarbeiterverwaltung.hpp"
 
 
@@ -12,6 +13,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT,  MainFrame::OnExit)
     EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
     EVT_MENU(ID_Zeiterfassung, MainFrame::on_zeit)
+    EVT_MENU(ID_Austragen, MainFrame::on_austragen)
     EVT_MENU(ID_Uebersicht, MainFrame::on_show_times)
     EVT_MENU(ID_Mitarbeiteranlage, MainFrame::on_new_employee)
     EVT_MENU(ID_Verwaltung, MainFrame::on_edit_employee)
@@ -55,6 +57,9 @@ wxBEGIN_EVENT_TABLE(Tarife, SubWindow)
     EVT_BUTTON(ID_Delete_Tarif_btn, Tarife::on_delete)
 wxEND_EVENT_TABLE()
 
+wxBEGIN_EVENT_TABLE(Abwesenheiten, SubWindow)
+    EVT_BUTTON(ID_Abwesenheit_speichern, Abwesenheiten::on_submit)
+wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(App);
 

@@ -37,6 +37,7 @@ class cppDatabase{
         bool execute_SQL(const char* strSQL);
         bool fill_combobox(wxComboBox* cbo,const char* strSQL);
         bool fill_grid(wxGrid* grd, const char* strSQL);
+        bool backUpDB();
         /*
         bool insert_in_tbl(std::vector<std::vector<std::string>> tbl_data)
         */
