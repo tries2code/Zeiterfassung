@@ -3,3 +3,4 @@ main
 Scripts
 
 .gitignore
+.vscode/settings.json

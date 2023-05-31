@@ -16,7 +16,6 @@
     "lldb.dereferencePointers": true,
     "lldb.consoleMode": "commands",
     "statsBar.location": "Right",
-    "workbench.colorTheme": "Default Dark+",
     "editor.bracketPairColorization.independentColorPoolPerBracketType": false,
     "editor.semanticTokenColorCustomizations": {},
     "editor.tokenColorCustomizations": {},
