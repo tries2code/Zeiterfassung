@@ -176,6 +176,16 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
         mysql_query(conn_db, strSQL);
         result_set = mysql_store_result(conn_db); 
 
+        //Spaltennamen übernehmen, oder Spalte verstecken
+        grd->ClearGrid();
+        for(int i = 0;i < grd->GetNumberCols();++i){
+            if(i+1 < result_set->field_count){
+                grd->ShowCol(i);
+                grd->SetColLabelValue(i, _(result_set->fields[i+1].name));    //Die erste Spalte ist für Zeilenbezeichnungen und wird hier ausgelassen
+            }
+            else grd->HideCol(i);
+        }
+
         //grd füllen
         int intRow= 0;
 	    while((row = mysql_fetch_row(result_set)) !=0){
@@ -187,13 +197,14 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
             grd->SetRowLabelValue(intRow, wxString::FromUTF8(row[0]));
 
             //Zeile füllen
-            for(unsigned int intCol = 0; intCol<result_set->field_count-1;++intCol)
+            for(unsigned int intCol = 0; intCol<result_set->field_count-1;++intCol){
               grd->SetCellValue(intRow,intCol,wxString::FromUTF8(row[intCol+1]));
-            
+              grd->SetCellAlignment(intRow, intCol, wxALIGN_CENTRE, wxALIGN_CENTRE);
+            }
+
             ++intRow;
 	    }
-        grd->InvalidateBestSize();
-        
+        grd->AutoSize();
         mysql_free_result(result_set);
         mysql_close(conn_db);
         return true;

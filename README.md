@@ -32,6 +32,7 @@ Zeit - Austragen
     -Prüfft ob innerhalb des angebenenen Zeitraums bereits hinterlegte Arbeitszeiten
 
 Zeit - Übersicht:
+    -Zeigt Arbeits- Urlaubs-, Krankheits-s und Sonstigezeiten an.
     -Nur für angelegte Mitarbeiter möglich
     -Nur Jahre in denen der jeweilige Mitarbeiter tätig war stehen zur Auswahl
     -Mitarbeiterauswahl per Dropdown oder Autocomplete

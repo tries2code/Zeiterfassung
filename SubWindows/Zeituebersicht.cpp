@@ -8,10 +8,12 @@ Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_tit
   lables[(int)u_lbl::Monat] = new wxStaticText(this,wxID_ANY,"    Monat");
   lables[(int)u_lbl::Jahr] = new wxStaticText(this,wxID_ANY,"    Jahr");
   lables[(int)u_lbl::Stunden] = new wxStaticText(this,wxID_ANY,"");
+  lables[(int)u_lbl::ZeitTyp] = new wxStaticText(this,wxID_ANY,"Ansicht");
 
   combo_boxen[(int)u_cbo::Benutzer] = new wxComboBox(this, ID_USR_cbo, default_str);
   combo_boxen[(int)u_cbo::Monat] = new wxComboBox(this, wxID_ANY, "Alle");
   combo_boxen[(int)u_cbo::Jahr] = new wxComboBox(this, ID_Year_cbo, default_str,wxDefaultPosition,wxDefaultSize,0,NULL,wxTE_PROCESS_ENTER);
+  combo_boxen[(int)u_cbo::ZeitTyp] = new wxComboBox(this, ID_ZTyp_cbo, "Arbeitszeiten");
   set_up_combos();
 
   grd_zeiten = new wxGrid(this,wxID_ANY,wxDefaultPosition,wxDefaultSize);
@@ -38,13 +40,17 @@ Uebersicht::Uebersicht(wxFrame* parent, cppDatabase* DB,const wxString& this_tit
   szr->Add( lables[(int)u_lbl::Jahr],szrflags );
   szr->Add( combo_boxen[(int)u_cbo::Jahr],szrflags );
   
+  szr->Add( lables[(int)u_lbl::ZeitTyp],szrflags );
+  szr->Add( combo_boxen[(int)u_cbo::ZeitTyp],szrflags );
+
+  szr->Add( btn_show_times,szrflags);
 
   wxFlexGridSizer * szr2 = new wxFlexGridSizer(1,10,10);
   szr2->Add(grd_zeiten,szrflags);
 
   wxBoxSizer * szrButtons = new wxBoxSizer( wxHORIZONTAL);
-  szrButtons->Add( btn_show_times,szrflags);
-  szrButtons->AddSpacer(290);
+  //szrButtons->Add( btn_show_times,szrflags);
+  szrButtons->AddSpacer(350);
   szrButtons->Add(  lables[(int)u_lbl::Stunden],szrflags);
   
   wxBoxSizer * szrCRUDForm = new wxBoxSizer(wxVERTICAL);
@@ -90,10 +96,27 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
              strTillMonth = std::to_string(combo_boxen[(int)u_cbo::Monat]->GetCurrentSelection());
     if(combo_boxen[(int)u_cbo::Monat]->GetValue()=="Alle"){strFromMonth = "1";strTillMonth = "12"; }
 
-    strSQL = "call SP_GET_Arbeitszeiten('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"',"+strFromMonth+","+strTillMonth+","+combo_boxen[(int)u_cbo::Jahr]->GetValue()+");";
+    std::string str_Auswahl = combo_boxen[(int)u_cbo::ZeitTyp]->GetValue().ToStdString();
+    if(str_Auswahl=="Arbeit")get_Arbeitszeiten(strFromMonth,strTillMonth);
+    else if(str_Auswahl=="Urlaub")get_Urlaubszeiten(strFromMonth,strTillMonth);
+    else if(str_Auswahl=="Krankheit")get_Krankheitszeiten(strFromMonth,strTillMonth);
+    else get_Sonstigezeiten(strFromMonth,strTillMonth);
+  }
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Uebersicht::on_show_times: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::on_show_times");
+  }
+}
+
+
+void Uebersicht::get_Arbeitszeiten(wxString& strFromMonth,wxString& strTillMonth){
+  try{
+    wxString strSQL = "call SP_GET_Arbeitszeiten('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"',"+strFromMonth+","+strTillMonth+","+combo_boxen[(int)u_cbo::Jahr]->GetValue()+");";
     db->fill_grid(grd_zeiten, strSQL.mb_str(wxConvUTF8));
 
-  //Summe der Stunden aus der Übersicht ermitteln
+    //Summe der Stunden aus der Übersicht ermitteln
     wxDouble db_lSum = 0.0F;
     for(int row_Index = 0; row_Index < grd_zeiten->GetNumberRows(); ++row_Index ){
       if(grd_zeiten->GetCellValue(row_Index,grd_zeiten->GetNumberCols()-1) != "")
@@ -112,16 +135,56 @@ void Uebersicht::on_show_times(wxCommandEvent& event){
     lables[(int)u_lbl::Stunden]->SetLabel("Insgesamt: " + str_Sum + " Stunden");
   }
   catch(std::exception& e){
-    LOG::log_msg("FEHLER in Uebersicht::on_show_times: " +  (std::string)e.what());
+    LOG::log_msg("FEHLER in Uebersicht::get_Arbeitszeiten: " +  (std::string)e.what());
   }
   catch(...){
-    LOG::log_msg("FEHLER in Uebersicht::on_show_times");
+    LOG::log_msg("FEHLER in Uebersicht::get_Arbeitszeiten");
   }
 }
 
+
+void Uebersicht::get_Urlaubszeiten(wxString& strFromMonth,wxString& strTillMonth){
+  try{
+    wxString strSQL = "call SP_GET_Urlaubszeiten('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"',"+strFromMonth+","+strTillMonth+","+combo_boxen[(int)u_cbo::Jahr]->GetValue()+");";
+    db->fill_grid(grd_zeiten, strSQL.mb_str(wxConvUTF8));
+  }
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Uebersicht::get_Arbeitszeiten: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::get_Arbeitszeiten");
+  }
+}
+
+void Uebersicht::get_Krankheitszeiten(wxString& strFromMonth,wxString& strTillMonth){
+  try{
+    wxString strSQL = "call SP_GET_Krankheitszeiten('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"',"+strFromMonth+","+strTillMonth+","+combo_boxen[(int)u_cbo::Jahr]->GetValue()+");";
+    db->fill_grid(grd_zeiten, strSQL.mb_str(wxConvUTF8));
+  }
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Uebersicht::get_Krankheitszeiten: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::get_Krankheitszeiten");
+  }
+}
+
+void Uebersicht::get_Sonstigezeiten(wxString& strFromMonth,wxString& strTillMonth){
+  try{
+    wxString strSQL = "call SP_GET_Sonstigezeiten('"+wxString::FromUTF8(combo_boxen[(int)u_cbo::Benutzer]->GetValue().mb_str(wxConvUTF8))+"',"+strFromMonth+","+strTillMonth+","+combo_boxen[(int)u_cbo::Jahr]->GetValue()+");";
+    db->fill_grid(grd_zeiten, strSQL.mb_str(wxConvUTF8));
+  }
+  catch(std::exception& e){
+    LOG::log_msg("FEHLER in Uebersicht::get_Sonstigezeiten: " +  (std::string)e.what());
+  }
+  catch(...){
+    LOG::log_msg("FEHLER in Uebersicht::get_Sonstigezeiten");
+  }
+}
+
+
 void Uebersicht::on_change_usr(wxCommandEvent& event){
   try{
-
     //Prüfen ob benutzer vorhanden ist
     int index = combo_boxen[(int)u_cbo::Benutzer]->GetStrings().Index(combo_boxen[(int)u_cbo::Benutzer]->GetValue());
     if(index<0){
@@ -159,6 +222,7 @@ void Uebersicht::on_change_usr(wxCommandEvent& event){
   }
 }
 
+
 void Uebersicht::on_enter_year(wxCommandEvent& event){
   try{
     if(combo_boxen[(int)u_cbo::Benutzer]->GetValue() == default_str){
@@ -178,21 +242,30 @@ void Uebersicht::on_enter_year(wxCommandEvent& event){
   }
 }
 
+
 bool Uebersicht::set_up_grid(){
   try{
     grd_zeiten->CreateGrid(10, 5);
-    grd_zeiten->SetColLabelValue(0, _(" Datum Anfang "));  
-    grd_zeiten->SetColLabelValue(1, _("Zeit Anfang")); 
-    grd_zeiten->SetColLabelValue(2, _("   Datum Ende   "));  
-    grd_zeiten->SetColLabelValue(3, _("Zeit Ende")); 
-    grd_zeiten->SetColLabelValue(4, _("Arbeitsstunden")); 
-    grd_zeiten->AutoSizeColumns(1300);
+
+    //Nächster Block soll eigentlich nur eine Mindestgröße des grids erstellen, Text wird weiter unten wieder gelöscht
+    for(int i = 0;i < grd_zeiten->GetNumberCols();++i){
+      grd_zeiten->SetColLabelValue(i, _("____________")); 
+    }    
+    grd_zeiten->AutoSize();
+
+    //Zeilen-Bezeichnung entfernen
     for(unsigned int intRow = 0;intRow < grd_zeiten->GetNumberRows();++intRow){
       grd_zeiten->SetRowLabelValue(intRow, "");
     }
-    grd_zeiten->SetColLabelAlignment(50, 300);
+    //Grid nicht editierbar machen
     grd_zeiten->DisableDragColSize();
-    grd_zeiten->DisableDragRowSize();
+    grd_zeiten->DisableDragRowSize(); 
+    grd_zeiten->EnableEditing(false);
+
+    //...hier wird der Text wieder gelöscht. Ja, muss auch anders gehen...
+    for(int i = 0;i < grd_zeiten->GetNumberCols();++i){
+      grd_zeiten->SetColLabelValue(i, _(" ")); 
+    }    
     return true;
   }
   catch(std::exception& e){
@@ -204,6 +277,7 @@ bool Uebersicht::set_up_grid(){
     return false;
   }
 }
+
 
 bool Uebersicht::set_up_combos(){
   try{
@@ -228,6 +302,15 @@ bool Uebersicht::set_up_combos(){
     combo_boxen[(int)u_cbo::Jahr]->SetEditable(false);
     combo_boxen[(int)u_cbo::Jahr]->SetToolTip(tt_Jahr);
     
+    //db->fill_combobox(combo_boxen[(int)u_cbo::ZeitTyp], "SELECT 'Arbeit' AS Bezeichnung UNION SELECT * FROM `V_ABW_Bezeichnung` LIMIT 100;");
+    combo_boxen[(int)u_cbo::ZeitTyp]->Insert("Arbeit",0);
+    combo_boxen[(int)u_cbo::ZeitTyp]->Insert("Urlaub",1);
+    combo_boxen[(int)u_cbo::ZeitTyp]->Insert("Krankheit",2);
+    combo_boxen[(int)u_cbo::ZeitTyp]->Insert("Sonstige",3);
+
+    combo_boxen[(int)u_cbo::ZeitTyp]->SetValue("Arbeit");
+    combo_boxen[(int)u_cbo::ZeitTyp]->SetEditable(false);
+    
     return true;
   }
   catch(std::exception& e){
@@ -239,6 +322,7 @@ bool Uebersicht::set_up_combos(){
     return false;
   }
 }
+
 
 Uebersicht::~Uebersicht(){
   for(wxComboBox* cb : combo_boxen) delete cb;

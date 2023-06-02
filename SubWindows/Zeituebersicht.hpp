@@ -11,13 +11,13 @@
 #include "wx/gtk/combobox.h"
 
 enum class u_cbo{
-    Benutzer,Monat,Jahr,Anzahl_cbo
+    Benutzer,Monat,Jahr,ZeitTyp,Anzahl_cbo
 };
 enum class u_lbl{
-    Benutzer,Monat,Jahr,Stunden, Anzahl_lbl
+    Benutzer,Monat,Jahr,Stunden,ZeitTyp, Anzahl_lbl
 };
 enum{
-   ID_Show_Times, ID_USR_cbo, ID_Year_cbo
+   ID_Show_Times, ID_USR_cbo, ID_Year_cbo, ID_ZTyp_cbo
 };
 
 class Uebersicht : public SubWindow{ 
@@ -37,7 +37,13 @@ class Uebersicht : public SubWindow{
      
     void on_show_times(wxCommandEvent& event);
     void on_enter_year(wxCommandEvent& event);
+
     bool set_up_combos();
     bool set_up_grid();
+    void get_Arbeitszeiten(wxString& strFromMonth,wxString& strTillMonth);
+    void get_Urlaubszeiten(wxString& strFromMonth,wxString& strTillMonth);
+    void get_Krankheitszeiten(wxString& strFromMonth,wxString& strTillMonth);
+    void get_Sonstigezeiten(wxString& strFromMonth,wxString& strTillMonth);
+
     wxDECLARE_EVENT_TABLE();
 };
