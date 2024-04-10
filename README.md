@@ -45,10 +45,11 @@ Mitarbeiter - Anlegen:
   -Prüft ob der Benutzername bereits in der Datenbank vorhanden ist, und fordert gegebenenfalls eine Alternative
   -Prüft Altersangabe auf Plausibilität
   -Prüft Altersangabe auf Mindesteintrittsalter(konfigurierbar)
-  -Prüft SV-Nummer(Format, Peronenbeogene Daten)
+  -Prüft SV-Nummer(Format, Personenbezogene Daten)
 
 Mitarbeiter - Verwalten:
     -Anpassung Hinterlegter Mitarbeiter-Daten
+    -Tarifwechsel, möglich zu einem belibigen Monatsanfang in der Zukunft
     -Passwort kann zurückgestzt werden(Initiales Passwort->Konfigurierbar)
     -Mitarbeiter auslagern -> Daten werden archiviert
 
@@ -57,7 +58,8 @@ Einstellungen - Mitarbeiter:
 
 Einstellungen - Tarife:
     -Zeigt Deteils aller Tarife
-    -Tarife können gelöscht werden. Gelöschte Tarife können lediglich nicht mehr vergeben werden, laufende Verträge         
-     behalten aber ihre Gültigkeit.
+    -Tarife können gelöscht werden. Gelöschte Tarife können lediglich nicht mehr vergeben werden, laufende Verträge behalten aber ihre Gültigkeit.
     -Tarife anlegen
      
+Datensicherung
+    -Die Datenbank wird bei Programmende gesichert und aus dem Dockercontainer in den Projektordner(Resources)kopiert. Dafür muss die backUp.sh im Working Directory des Dockercontainers hinterlegt sein.

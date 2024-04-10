@@ -221,7 +221,7 @@ bool cppDatabase::fill_grid(wxGrid* grd,const char* strSQL){
 
 //DB wird beim Beenden in Dump-Datei gespeichert. Zurzeit nur lokal.
 //Es gibt noch ein weiteres Script im SQL-Docker Container, siehe in backUpDB.sh
-//Alle Scripts müssen überarbeitet oder ersetzt werden
+//Alle Scripts, oder gleich das ganze Konzept, müssen überarbeitet oder ersetzt werden
 bool cppDatabase::backUpDB(){
     try{
         system("./Scripts/backUpDB.sh");

@@ -378,7 +378,7 @@ bool Verwaltung::check_entries(){
       );
       return false;
     }
-    //Tarif-Wchsel-Datum prüfen
+    //Tarif-Wechsel-Datum prüfen
     if(tarif_changed){
       wxString str_date_of_change = tarif_date->GetValue().Format(wxT("%Y-%m-%d"));
       wxString strSQL = "call SP_CHECK_Tarif_LOG('"+wxString::FromUTF8(cbo_benutzer->GetValue().mb_str(wxConvUTF8))+"','"+str_date_of_change+"')";
@@ -388,6 +388,14 @@ bool Verwaltung::check_entries(){
           wxString::FromUTF8("Der "+str_date_of_change+" liegt in der Vergangenheit."),
           wxString::FromUTF8("Tarif-Wechsel nicht möglich!"),
           wxOK|wxICON_ERROR
+        );
+        return false;
+      }
+      if(check == "-7"){
+        wxMessageBox( 
+        wxString::FromUTF8("Tarif-Wechsel sind nur zum Monatsanfang möglich."),
+        wxString::FromUTF8("Tarif-Wechsel nicht möglich!"),
+        wxOK|wxICON_ERROR
         );
         return false;
       }

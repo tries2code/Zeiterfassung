@@ -16,7 +16,7 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
     lables[(int)m_lbl::PLZ] = new wxStaticText(this,wxID_ANY,"             PLZ");
     lables[(int)m_lbl::Ort] = new wxStaticText(this,wxID_ANY,"Ort");
     lables[(int)m_lbl::Land] = new wxStaticText(this,wxID_ANY,"Land");
-    lables[(int)m_lbl::SVNummer] = new wxStaticText(this,wxID_ANY,"SV-Nr");
+    lables[(int)m_lbl::SVNummer] = new wxStaticText(this,wxID_ANY,"SV-Nr ℹ️");
     lables[(int)m_lbl::Anstellungsdatum] = new wxStaticText(this,wxID_ANY,"Anstellungsdatum");
     lables[(int)m_lbl::Geburtstag] = new wxStaticText(this,wxID_ANY,"Geburtstag");
     lables[(int)m_lbl::Tarif] = new wxStaticText(this,wxID_ANY,"Tarif");
@@ -49,6 +49,9 @@ Mitarbeiteranlage::Mitarbeiteranlage(wxFrame* parent, cppDatabase* DB, const wxS
 
     lables[(int)m_lbl::Benutzername]->SetToolTip("Kann nicht mehr verändert werden.");
     text_ctrls[(int)m_tc::Benutzername]->SetToolTip("Kann nicht mehr verändert werden.");
+
+    lables[(int)m_lbl::SVNummer]->SetToolTip("Format ZZ-ZZZZZZ-B-ZZZ.");
+    text_ctrls[(int)m_tc::SVNummer]->SetToolTip("Format ZZ-ZZZZZZ-B-ZZZ.");
 
 
 //Anordnung aller sichtbaren Elemente/////////////////////////////////////////////////////////////////////////////////
