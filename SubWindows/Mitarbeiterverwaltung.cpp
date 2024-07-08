@@ -331,7 +331,7 @@ void Verwaltung::on_unload(wxCommandEvent& event){
 
       wxMessageBox( 
         wxString::FromUTF8(str_name_empl) + " wurde ausgelagert.",
-        wxString::FromUTF8("Aulagern erfolgreich."),
+        wxString::FromUTF8("Auslagern erfolgreich."),
         wxOK|wxICON_INFORMATION
       );
 
